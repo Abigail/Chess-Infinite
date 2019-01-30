@@ -40,10 +40,10 @@ sub target ($self) {
 
     foreach my $leap ($self -> leaps) {
         my ($new_x, $new_y) = ($x + $$leap [0], $y + $$leap [1]);
-        next unless $board -> is_valid   ($x, $y);
-        next if     $board -> is_blocked ($x, $y);
-        my $value = $board -> to_integer ($x, $y);
-        if (defined $min && $value < $min) {
+        next unless $board -> is_valid   ($new_x, $new_y);
+        next if     $board -> is_blocked ($new_x, $new_y);
+        my $value = $board -> to_value   ($new_x, $new_y);
+        if (!defined $min || $value < $min) {
             $min        = $value;
             $min_target = [$new_x, $new_y];
         }
