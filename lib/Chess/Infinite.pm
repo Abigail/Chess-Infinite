@@ -7,6 +7,16 @@ no  warnings 'syntax';
 
 our $VERSION = '2019012901';
 
+#
+# Boards
+#
+use Chess::Infinite::Board::Spiral;
+
+#
+# Pieces
+#
+use Chess::Infinite::Piece::Knight;
+
 
 1;
 
