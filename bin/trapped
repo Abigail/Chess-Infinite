@@ -45,7 +45,8 @@ my $move_count = 0;
 while ($move_count ++ < $max_moves) {
     if (!$piece -> move) {
         my ($x, $y) = $piece -> position;
-        printf "Piece trapped on value %d (%d, %d) after %d moves\n",
+        printf "%s trapped on value %d (%d, %d) after %d moves.\n",
+                ucfirst lc $piece -> name,
                 $board -> to_value ($x, $y), $x, $y, $move_count;
         last;
     }

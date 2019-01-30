@@ -30,6 +30,9 @@ sub leaps ($self) {
     @leaps;
 }
 
+
+sub name ($self) {"Knight"}
+
 1;
 
 __END__

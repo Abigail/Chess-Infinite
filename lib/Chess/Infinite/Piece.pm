@@ -48,6 +48,11 @@ sub board ($self) {
 
 
 #
+# Returns the name of the piece. Must be overridden.
+#
+sub name ($self) {...}
+
+#
 # Move the piece, if possible. Returns true if the piece could be moved,
 # false otherwise.
 #
