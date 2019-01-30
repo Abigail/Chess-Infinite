@@ -36,9 +36,9 @@ die "'$piece_name': no such piece\n" unless    $piece2class {$piece_name};
 my $board_class = "Chess::Infinite::Board::" . $board2class {$board_name};
 my $piece_class = "Chess::Infinite::Piece::" . $piece2class {$piece_name};
 
-
 my $board = $board_class -> new -> init;
-my $piece = $piece_class -> new -> init -> set_board ($board);
+my $piece = $piece_class -> new -> init (board  =>  $board,
+                                         start  =>  $start,);
 
 
 my $move_count = 0;

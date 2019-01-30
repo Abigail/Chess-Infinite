@@ -18,9 +18,12 @@ sub new ($class) {
     bless \do {my $var} => $class;
 }
 
-sub init ($self) {
-    $self -> set_position (0, 0);
-    $self
+sub init ($self, %args) {
+    my $board = $args {board} // die "A piece must be initialized with a board";
+    my $start = $args {start} || 1;
+    $self -> set_board ($args {board});
+    $self -> set_position ($board -> to_coordinates ($start));
+    $self;
 }
 
 #
