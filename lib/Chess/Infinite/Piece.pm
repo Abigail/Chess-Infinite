@@ -49,10 +49,10 @@ sub board ($self) {
 # false otherwise.
 #
 sub move ($self) {
-    my $min_move = $self -> min_move or return;
+    my $target = $self -> target or return;
 
-    $self -> set_position   (@$min_move);
-    $self -> board -> block (@$min_move);
+    $self -> set_position   (@$target);
+    $self -> board -> block (@$target);
 
     1;
 }
