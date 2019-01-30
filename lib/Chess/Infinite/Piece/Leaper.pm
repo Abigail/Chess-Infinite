@@ -21,7 +21,7 @@ use parent 'Chess::Infinite::Piece';
 # The blocked fields are stored in the board object. 
 #
 # This method is board agnostic; it will ask the board which positions
-# are valid (if the board doesn't conver the plane, some positions will
+# are valid (if the board doesn't cover the plane, some positions will
 # be invalid), and which positions are blocked.
 #
 #  IN:  $self:  Current object
