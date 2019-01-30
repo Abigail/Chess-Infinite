@@ -54,8 +54,15 @@ sub board ($self) {
 sub move ($self) {
     my $target = $self -> target or return;
 
+    #
+    # Block the current position
+    #
+    $self -> board -> block ($self -> position);
+
+    #
+    # Move the piece
+    #
     $self -> set_position   (@$target);
-    $self -> board -> block (@$target);
 
     1;
 }
