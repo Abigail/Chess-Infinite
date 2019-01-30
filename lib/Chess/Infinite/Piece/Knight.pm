@@ -1,4 +1,4 @@
-package Chess::Infinite::Piece::Leaper::Knight;
+package Chess::Infinite::Piece::Knight;
 
 use 5.028;
 
