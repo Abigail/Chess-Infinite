@@ -1,0 +1,55 @@
+#!/opt/perl/bin/perl
+
+use 5.028;
+
+use strict;
+use warnings;
+no  warnings 'syntax';
+
+use experimental 'signatures';
+use experimental 'lexical_subs';
+
+use lib "../lib";
+
+use Getopt::Long;
+
+use Chess::Infinite;
+
+GetOptions  piece      =>  \(my $piece_name = "knight"),
+            board      =>  \(my $board_name = "spiral"),
+            start      =>  \(my $start      =  1),
+            max_moves  =>  \(my $max_moves  =  10_000),
+;
+
+my %board2class = (
+    spiral      =>  "Spiral"
+);
+
+my %piece2class = (
+    knight      =>  "Knight",
+    kn          =>  "Knight",
+);
+
+die "'$board_name': no such board\n" unless    $board2class {$board_name};
+die "'$piece_name': no such piece\n" unless    $piece2class {$piece_name};
+
+my $board_class = "Chess::Infinite::Board::" . $board2class {$board_name};
+my $piece_class = "Chess::Infinite::Piece::" . $piece2class {$piece_name};
+
+
+my $board = $board_class -> new -> init;
+my $piece = $piece_class -> new -> init -> set_board ($board);
+
+
+my $move_count = 0;
+while ($move_count ++ < $max_moves) {
+    if (!$piece -> move) {
+        my ($x, $y) = $piece -> position;
+        printf "Piece trapped on value %d (%d, %d) after %d moves\n",
+                $board -> to_value ($x, $y), $x, $y, $move_count;
+        last;
+    }
+}
+
+
+__END__
