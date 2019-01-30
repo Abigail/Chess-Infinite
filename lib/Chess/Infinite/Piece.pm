@@ -18,7 +18,10 @@ sub new ($class) {
     bless \do {my $var} => $class;
 }
 
-sub init ($self) {$self}
+sub init ($self) {
+    $self -> set_position (0, 0);
+    $self
+}
 
 #
 # Set/return a position
