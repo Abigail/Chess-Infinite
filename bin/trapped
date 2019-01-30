@@ -15,10 +15,10 @@ use Getopt::Long;
 
 use Chess::Infinite;
 
-GetOptions  piece      =>  \(my $piece_name = "knight"),
-            board      =>  \(my $board_name = "spiral"),
-            start      =>  \(my $start      =  1),
-            max_moves  =>  \(my $max_moves  =  10_000),
+GetOptions  "piece=s"      =>  \(my $piece_name = "knight"),
+            "board=s"      =>  \(my $board_name = "spiral"),
+            "start=i"      =>  \(my $start      =  1),
+            "max_moves=i"  =>  \(my $max_moves  =  10_000),
 ;
 
 my %board2class = (
