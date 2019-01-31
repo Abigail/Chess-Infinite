@@ -18,6 +18,7 @@ use Chess::Infinite::Board::Spiral;
 use Chess::Infinite::Piece::Knight;
 use Chess::Infinite::Piece::Ferz;
 use Chess::Infinite::Piece::Camel;
+use Chess::Infinite::Piece::Alfil;
 
 
 1;
