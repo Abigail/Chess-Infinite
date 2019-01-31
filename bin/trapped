@@ -28,6 +28,7 @@ my %board2class = (
 my %piece2class = (
     knight      =>  "Knight",
     kn          =>  "Knight",
+    ferz        =>  "Ferz",
 );
 
 die "'$board_name': no such board\n" unless    $board2class {$board_name};

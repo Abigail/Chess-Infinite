@@ -16,6 +16,7 @@ use Chess::Infinite::Board::Spiral;
 # Pieces
 #
 use Chess::Infinite::Piece::Knight;
+use Chess::Infinite::Piece::Ferz;
 
 
 1;
