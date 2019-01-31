@@ -21,14 +21,17 @@ GetOptions  "piece=s"      =>  \(my $piece_name = "knight"),
             "max_moves=i"  =>  \(my $max_moves  =  10_000),
 ;
 
+$board_name = fc $board_name;
+$piece_name = fc $piece_name;
+
 my %board2class = (
-    spiral      =>  "Spiral"
+    fc spiral      =>  "Spiral"
 );
 
 my %piece2class = (
-    knight      =>  "Knight",
-    kn          =>  "Knight",
-    ferz        =>  "Ferz",
+    fc knight      =>  "Knight",
+    fc kn          =>  "Knight",
+    fc ferz        =>  "Ferz",
 );
 
 die "'$board_name': no such board\n" unless    $board2class {$board_name};
