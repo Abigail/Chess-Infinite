@@ -22,12 +22,6 @@ use parent 'Chess::Infinite::Piece::Leaper';
 
 sub leaps ($self) {
     return $self -> nm_leaps (1, 2);
-    my   @leaps = [1, 2];
-    push @leaps => map {[ $$_ [0], -$$_ [1]]} @leaps;
-    push @leaps => map {[-$$_ [0],  $$_ [1]]} @leaps;
-    push @leaps => map {[ $$_ [1],  $$_ [0]]} @leaps;
-
-    @leaps;
 }
 
 
