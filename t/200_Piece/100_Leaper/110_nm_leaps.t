@@ -11,8 +11,10 @@ use experimental 'lexical_subs';
 
 use Test::More;
 use Chess::Infinite::Piece::Leaper;
+use Chess::Infinite::Board::Spiral;
 
-my $leaper = Chess::Infinite::Piece::Leaper:: -> new -> init;
+my $board  = Chess::Infinite::Board::Spiral:: -> new -> init;
+my $leaper = Chess::Infinite::Piece::Leaper:: -> new -> init (board => $board);
 
 sub as_leap {
     $$a [0] <=> $$b [0] || $$a [1] <=> $$b [1]

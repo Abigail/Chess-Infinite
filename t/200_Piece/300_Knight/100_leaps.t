@@ -10,9 +10,12 @@ use experimental 'signatures';
 use experimental 'lexical_subs';
 
 use Test::More;
-use Chess::Infinite::Piece::Knight;
 
-my $knight = Chess::Infinite::Piece::Knight:: -> new -> init;
+use Chess::Infinite::Piece::Knight;
+use Chess::Infinite::Board::Spiral;
+
+my $board  = Chess::Infinite::Board::Spiral:: -> new -> init;
+my $knight = Chess::Infinite::Piece::Knight:: -> new -> init (board => $board);
 
 my @got = $knight -> leaps;
 
