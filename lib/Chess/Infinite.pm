@@ -19,6 +19,7 @@ use Chess::Infinite::Piece::Knight;
 use Chess::Infinite::Piece::Ferz;
 use Chess::Infinite::Piece::Camel;
 use Chess::Infinite::Piece::Alfil;
+use Chess::Infinite::Piece::King;
 
 
 1;
