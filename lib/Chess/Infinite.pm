@@ -20,6 +20,7 @@ use Chess::Infinite::Piece::Ferz;
 use Chess::Infinite::Piece::Camel;
 use Chess::Infinite::Piece::Alfil;
 use Chess::Infinite::Piece::King;
+use Chess::Infinite::Piece::DrunkenElephant;
 
 
 1;
