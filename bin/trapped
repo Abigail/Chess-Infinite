@@ -58,6 +58,7 @@ while ($move_count ++ < $max_moves) {
                 $board -> to_value ($x, $y), $x, $y, $move_count;
         exit;
     }
+    printf "%d %d\n" => $piece -> position;
 }
 my ($x, $y) = $piece -> position;
 printf "%s on value %d (%d, %d) after %d moves.\n" =>
