@@ -22,7 +22,7 @@ use parent 'Chess::Infinite::Piece';
 #
 # This method is board agnostic; it will ask the board which positions
 # are valid (if the board doesn't cover the plane, some positions will
-# be invalid), and which positions are blocked.
+# be invalid). The piece is supposed to track where it has been.
 #
 #  IN:  $self:  Current object
 #
@@ -40,9 +40,9 @@ sub target ($self) {
 
     foreach my $leap ($self -> leaps) {
         my ($new_x, $new_y) = ($x + $$leap [0], $y + $$leap [1]);
-        next unless $board -> is_valid   ($new_x, $new_y);
-        next if     $board -> is_blocked ($new_x, $new_y);
-        my $value = $board -> to_value   ($new_x, $new_y);
+        next unless $board -> is_valid  ($new_x, $new_y);
+        next if     $self  -> been_here ($new_x, $new_y);
+        my $value = $board -> to_value  ($new_x, $new_y);
         if (!defined $min || $value < $min) {
             $min        = $value;
             $min_target = [$new_x, $new_y];

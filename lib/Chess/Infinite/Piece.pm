@@ -13,6 +13,8 @@ use Hash::Util::FieldHash qw [fieldhash];
 
 fieldhash my %position;
 fieldhash my %board;
+fieldhash my %been_here;
+fieldhash my %moves;
 
 sub new ($class) {
     bless \do {my $var} => $class;
@@ -21,8 +23,22 @@ sub new ($class) {
 sub init ($self, %args) {
     my $board = $args {board} // die "A piece must be initialized with a board";
     my $start = $args {start} || 1;
+    #
+    # Initialize where we've been.
+    #
+    $been_here {$self} = ();
+    $moves {$self}     = [];
+
+    #
+    # Where are we moving on?
+    #
     $self -> set_board ($args {board});
-    $self -> set_position ($board -> to_coordinates ($start));
+
+    #
+    # Put the piece at the start position.
+    #
+    my ($x, $y) = $board -> to_coordinates ($start);
+    $self -> set_position ($x, $y);
     $self;
 }
 
@@ -30,7 +46,9 @@ sub init ($self, %args) {
 # Set/return a position
 #
 sub set_position ($self, $x, $y) {
-    $position {$self} = [$x, $y];
+    $position  {$self}           = [$x, $y];
+    $been_here {$self} {$x} {$y} = 1;
+    push @{$moves {$self}} => [$x, $y];
     $self;
 }
 sub position ($self) {
@@ -51,6 +69,13 @@ sub board ($self) {
 
 
 #
+# Have we been here?
+#
+sub been_here ($self, $x, $y) {
+    $been_here {$self} {$x} {$y};
+}
+
+#
 # Returns the name of the piece. Must be overridden.
 #
 sub name ($self) {...}
@@ -63,14 +88,9 @@ sub move ($self) {
     my $target = $self -> target or return;
 
     #
-    # Block the current position
-    #
-    $self -> board -> block ($self -> position);
-
-    #
     # Move the piece
     #
-    $self -> set_position   (@$target);
+    $self -> set_position (@$target);
 
     1;
 }
