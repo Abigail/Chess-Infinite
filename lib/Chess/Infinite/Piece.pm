@@ -15,7 +15,7 @@ fieldhash my %position;
 fieldhash my %board;
 fieldhash my %been_here;
 fieldhash my %move_list;
-fieldhash my %values;
+fieldhash my %value_list;
 fieldhash my %stuck;
 
 sub new ($class) {
@@ -39,8 +39,9 @@ sub init ($self, %args) {
 sub set_position ($self, $x, $y, $value = undef) {
     $position  {$self}           = [$x, $y];
     $been_here {$self} {$x} {$y} = 1;
-    push @{$move_list {$self}} => [$x, $y];
-    push @{$values    {$self}} => $value // $self -> board -> to_value ($x, $y);
+    push @{$move_list  {$self}} => [$x, $y];
+    push @{$value_list {$self}} => $value //
+               $self -> board -> to_value ($x, $y);
     $self;
 }
 sub position ($self) {
@@ -87,6 +88,13 @@ sub move_list ($self) {
     wantarray ? @$move_list : $move_list;
 }
 
+#
+# List of values
+sub value_list ($self) {
+    my $value_list = $value_list {$self} || [];
+    wantarray ? @$value_list : $value_list;
+}
+
 
 #
 # Returns the name of the piece. Must be overridden.
@@ -119,10 +127,10 @@ sub run ($self, %args) {
     #
     # Clear the move list, and where we've been so far
     #
-    $been_here {$self} = ();
-    $move_list {$self} = [];
-    $values {$self}    = [];
-    $stuck {$self}     = 0;
+    $been_here {$self}  = ();
+    $move_list {$self}  = [];
+    $value_list {$self} = [];
+    $stuck {$self}      = 0;
 
     my $board = $self -> board;
 
@@ -151,14 +159,15 @@ sub run ($self, %args) {
 # Summary: return a summary of what was done.
 #
 sub summary ($self) {
-    my $move_list = $self -> move_list;
-    my $stuck     = $self -> stuck;
-    my $summary   = "";
+    my $move_list  = $self -> move_list;
+    my $value_list = $self -> value_list;
+    my $stuck      = $self -> stuck;
+    my $summary    = "";
 
     $summary = sprintf "%s %s on value %d (%d, %d) after %d moves.\n" =>
                         ucfirst lc $self -> name,
                         $stuck ? "trapped" : "arrived",
-                        $values {$self} [-1],
+                        $$value_list [-1],
                         @{$$move_list [-1]},
                         scalar @$move_list;
 
