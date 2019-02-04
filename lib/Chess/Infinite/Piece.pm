@@ -101,20 +101,6 @@ sub value_list ($self) {
 #
 sub name ($self) {...}
 
-#
-# Move the piece, if possible. Returns true if the piece could be moved,
-# false otherwise.
-#
-sub move ($self) {
-    my $target = $self -> target or return;
-
-    #
-    # Move the piece
-    #
-    $self -> set_position (@$target);
-
-    1;
-}
 
 #
 # Run: Move the piece until it gets stuck, or until we run out
