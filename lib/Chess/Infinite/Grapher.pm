@@ -19,6 +19,17 @@ my $LEFT_MARGIN =  10;
 my $TOP_MARGIN  =  10;
 my $MIN_SCALE   =  10;
 
+my $extension   = "svg";
+
+my sub file_name ($piece, $type) {
+    my $name = lc $piece -> name;
+    $name =~ s/\s+/_/g;
+
+    $name . "-" . $type . "." . $extension;
+}
+
+
+
 sub route ($class, %args) {
     my $piece     = $args {piece};
     my $min_scale = $args {min_scale} // $MIN_SCALE;
@@ -98,7 +109,7 @@ sub route ($class, %args) {
 
     my $xml = $svg -> xmlify;
 
-    my $file = $piece -> name . "-path.svg";
+    my $file = file_name $piece, "path";
     open my $fh, ">", $file or die "Failed to open $file: $!";
     print $fh $xml;
     close $fh or die "Failed to close $file: $!";
