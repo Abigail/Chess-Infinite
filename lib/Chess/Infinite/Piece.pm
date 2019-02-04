@@ -147,6 +147,41 @@ sub run ($self, %args) {
     }
 }
 
+#
+# Summary: return a summary of what was done.
+#
+sub summary ($self) {
+    my $move_list = $self -> move_list;
+    my $stuck     = $self -> stuck;
+    my $summary   = "";
+
+    $summary = sprintf "%s %s on value %d (%d, %d) after %d moves.\n" =>
+                        ucfirst lc $self -> name,
+                        $stuck ? "trapped" : "arrived",
+                        $values {$self} [-1],
+                        @{$$move_list [-1]},
+                        scalar @$move_list;
+
+    #
+    # Find the binding box
+    #
+    my $big = 1 << 63;
+    my ($min_x, $min_y, $max_x, $max_y) = ($big, $big, -$big, -$big);
+    foreach my $move (@$move_list) {
+        my ($x, $y) = @$move;
+        $min_x = $x if $x < $min_x;
+        $min_y = $y if $y < $min_y;
+        $max_x = $x if $x > $max_x;
+        $max_y = $y if $y > $max_y;
+    }
+    $summary .= sprintf "Bounding box = %d x %d [(%d, %d) x (%d, %d)]\n" =>
+                         $max_x - $min_x + 1, $max_y - $min_y + 1,
+                         $min_x, $min_y, $max_x, $max_y;
+
+    $summary;
+}
+
+
 1;
 
 

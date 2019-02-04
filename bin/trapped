@@ -46,29 +46,10 @@ my $board_class = "Chess::Infinite::Board::" . $board2class {$board_name};
 my $piece_class = "Chess::Infinite::Piece::" . $piece2class {$piece_name};
 
 my $board = $board_class -> new -> init;
-my $piece = $piece_class -> new -> init (board  =>  $board,
-                                         start  =>  $start,);
+my $piece = $piece_class -> new -> init (board  =>  $board);
+$piece -> run;
 
-
-my $move_count = 0;
-while ($move_count ++ < $max_moves) {
-    if (!$piece -> move) {
-        my ($x, $y) = $piece -> position;
-        printf "%s trapped on value %d (%d, %d) after %d moves.\n",
-                ucfirst lc $piece -> name,
-                $board -> to_value ($x, $y), $x, $y, $move_count;
-        last;
-    }
-}
-
-=pod
-
-my ($x, $y) = $piece -> position;
-printf "%s on value %d (%d, %d) after %d moves.\n" =>
-         ucfirst lc $piece -> name,
-         $board -> to_value ($x, $y), $x, $y, $move_count - 1;
-
-=cut
+say $piece -> summary;
 
 
 Chess::Infinite::Grapher:: -> route (piece => $piece);
