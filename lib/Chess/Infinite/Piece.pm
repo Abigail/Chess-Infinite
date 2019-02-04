@@ -14,7 +14,7 @@ use Hash::Util::FieldHash qw [fieldhash];
 fieldhash my %position;
 fieldhash my %board;
 fieldhash my %been_here;
-fieldhash my %moves;
+fieldhash my %move_list;
 fieldhash my %values;
 fieldhash my %stuck;
 
@@ -39,8 +39,8 @@ sub init ($self, %args) {
 sub set_position ($self, $x, $y, $value = undef) {
     $position  {$self}           = [$x, $y];
     $been_here {$self} {$x} {$y} = 1;
-    push @{$moves  {$self}} => [$x, $y];
-    push @{$values {$self}} => $value // $self -> board -> to_value ($x, $y);
+    push @{$move_list {$self}} => [$x, $y];
+    push @{$values    {$self}} => $value // $self -> board -> to_value ($x, $y);
     $self;
 }
 sub position ($self) {
@@ -82,8 +82,9 @@ sub been_here ($self, $x, $y) {
 #
 # List of moves
 #
-sub moves ($self) {
-    @{$moves {$self} || []};
+sub move_list ($self) {
+    my $move_list = $move_list {$self} || [];
+    wantarray ? @$move_list : $move_list;
 }
 
 
@@ -119,7 +120,7 @@ sub run ($self, %args) {
     # Clear the move list, and where we've been so far
     #
     $been_here {$self} = ();
-    $moves {$self}     = [];
+    $move_list {$self} = [];
     $values {$self}    = [];
     $stuck {$self}     = 0;
 

@@ -21,7 +21,7 @@ my $TOP_MARGIN  =  10;
 sub route ($class, %args) {
     my $piece = $args {piece};
 
-    my @moves = $piece -> moves;
+    my @moves = $piece -> move_list;
     my @X = map {$$_ [0]} @moves;
     my @Y = map {$$_ [1]} @moves;
 
