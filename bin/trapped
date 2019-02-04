@@ -56,14 +56,21 @@ while ($move_count ++ < $max_moves) {
         printf "%s trapped on value %d (%d, %d) after %d moves.\n",
                 ucfirst lc $piece -> name,
                 $board -> to_value ($x, $y), $x, $y, $move_count;
-        exit;
+        last;
     }
-    printf "%d %d\n" => $piece -> position;
 }
+
+=pod
+
 my ($x, $y) = $piece -> position;
 printf "%s on value %d (%d, %d) after %d moves.\n" =>
          ucfirst lc $piece -> name,
          $board -> to_value ($x, $y), $x, $y, $move_count - 1;
+
+=cut
+
+
+Chess::Infinite::Grapher:: -> route (piece => $piece);
 
 
 __END__

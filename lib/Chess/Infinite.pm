@@ -7,6 +7,8 @@ no  warnings 'syntax';
 
 our $VERSION = '2019012901';
 
+use Chess::Infinite::Grapher;
+
 #
 # Boards
 #

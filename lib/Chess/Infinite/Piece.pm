@@ -76,6 +76,13 @@ sub been_here ($self, $x, $y) {
 }
 
 #
+# List of moves
+#
+sub moves ($self) {
+    @{$moves {$self} || []};
+}
+
+#
 # Returns the name of the piece. Must be overridden.
 #
 sub name ($self) {...}
