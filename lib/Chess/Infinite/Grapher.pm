@@ -14,12 +14,14 @@ our $VERSION = '2019012901';
 use SVG;
 use List::Util qw [min max];
 
-my $SIZE        = 750;
-my $LEFT_MARGIN =  10;
-my $TOP_MARGIN  =  10;
-my $MIN_SCALE   =  10;
+my $SIZE          = 750;
+my $LEFT_MARGIN   =  10;
+my $RIGHT_MARGIN  =  10;
+my $TOP_MARGIN    =  10;
+my $BOTTOM_MARGIN =  10;
+my $MIN_SCALE     =  10;
 
-my $extension   = "svg";
+my $extension     = "svg";
 
 my sub file_name ($piece, $type) {
     my $name = lc $piece -> name;
@@ -71,8 +73,8 @@ sub route ($class, %args) {
     # Create the SVG image
     #
     my $svg = SVG:: -> new (
-        width  => max (@X),
-        height => max (@Y),
+        width  => max (@X) + $RIGHT_MARGIN,
+        height => max (@Y) + $BOTTOM_MARGIN,
     );
 
     #
