@@ -160,7 +160,7 @@ sub summary ($self) {
     #
     # Find the binding box
     #
-    my $big = 1 << 63;
+    my $big = 0xFFFF_FFFF;
     my ($min_x, $min_y, $max_x, $max_y) = ($big, $big, -$big, -$big);
     foreach my $move (@$move_list) {
         my ($x, $y) = @$move;
