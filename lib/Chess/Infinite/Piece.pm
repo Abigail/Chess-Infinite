@@ -173,6 +173,31 @@ sub summary ($self) {
                          $max_x - $min_x + 1, $max_y - $min_y + 1,
                          $min_x, $min_y, $max_x, $max_y;
 
+    #
+    # What is the maximum values, and what is the first non-visited value?
+    #
+    my @values = sort {$a <=> $b} @$value_list;
+    my $first_unused = 0;
+    #
+    # Special case if the least used value != 1 (we may not have started there)
+    #
+    if ($values [0] != 1) {
+        $first_unused = 1;
+    }
+    else {
+        foreach (my $i = 1; $i < @values; $i ++) {
+            if ($values [$i - 1] + 1 != $values [$i]) {
+                $first_unused = $values [$i - 1] + 1;
+                last;
+            }
+        }
+        $first_unused ||= $values [-1] + 1;
+    }
+    $summary .= sprintf "Highest visited value: %d; " .
+                        "lowest unvisited value: %d.\n" =>
+                        $values [-1], $first_unused;
+
+
     $summary;
 }
 
