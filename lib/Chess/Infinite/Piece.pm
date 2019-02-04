@@ -16,7 +16,7 @@ fieldhash my %board;
 fieldhash my %been_here;
 fieldhash my %move_list;
 fieldhash my %value_list;
-fieldhash my %stuck;
+fieldhash my %trapped;
 
 sub new ($class) {
     bless \do {my $var} => $class;
@@ -62,15 +62,15 @@ sub board ($self) {
 
 
 #
-# Set that we're stuck/Are we stuck?
+# Set that we're trapped/Are we trapped?
 #
-sub set_stuck ($self) {
-    $stuck {$self} = 1;
+sub set_trapped ($self) {
+    $trapped {$self} = 1;
     $self;
 }
 
-sub stuck ($self) {
-    $stuck {$self}
+sub trapped ($self) {
+    $trapped {$self}
 }
 
 #
@@ -103,7 +103,7 @@ sub name ($self) {...}
 
 
 #
-# Run: Move the piece until it gets stuck, or until we run out
+# Run: Move the piece until it gets trapped, or until we run out
 # of moves
 #
 sub run ($self, %args) {
@@ -116,7 +116,7 @@ sub run ($self, %args) {
     $been_here {$self}  = ();
     $move_list {$self}  = [];
     $value_list {$self} = [];
-    $stuck {$self}      = 0;
+    $trapped {$self}    = 0;
 
     my $board = $self -> board;
 
@@ -135,7 +135,7 @@ sub run ($self, %args) {
             next;
         }
         else {
-            $self -> set_stuck;
+            $self -> set_trapped;
             last;
         }
     }
@@ -147,12 +147,12 @@ sub run ($self, %args) {
 sub summary ($self) {
     my $move_list  = $self -> move_list;
     my $value_list = $self -> value_list;
-    my $stuck      = $self -> stuck;
+    my $trapped    = $self -> trapped;
     my $summary    = "";
 
     $summary = sprintf "%s %s on value %d (%d, %d) after %d moves.\n" =>
                         ucfirst lc $self -> name,
-                        $stuck ? "trapped" : "arrived",
+                        $trapped ? "trapped" : "arrived",
                         $$value_list [-1],
                         @{$$move_list [-1]},
                         scalar @$move_list;
