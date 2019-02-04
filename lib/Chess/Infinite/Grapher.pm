@@ -17,9 +17,11 @@ use List::Util qw [min max];
 my $SIZE        = 750;
 my $LEFT_MARGIN =  10;
 my $TOP_MARGIN  =  10;
+my $MIN_SCALE   =  10;
 
 sub route ($class, %args) {
-    my $piece = $args {piece};
+    my $piece     = $args {piece};
+    my $min_scale = $args {min_scale} // $MIN_SCALE;
 
     my @moves = $piece -> move_list;
     my @X = map {$$_ [0]} @moves;
@@ -46,6 +48,7 @@ sub route ($class, %args) {
     # Calculate the scale.
     #
     my $scale = $SIZE / $max;
+       $scale = $min_scale if $min_scale && $scale < $min_scale;
 
     #
     # Scale the points, and shift them.
@@ -57,8 +60,8 @@ sub route ($class, %args) {
     # Create the SVG image
     #
     my $svg = SVG:: -> new (
-        width  => $SIZE + $LEFT_MARGIN,
-        height => $SIZE + $TOP_MARGIN,
+        width  => max (@X),
+        height => max (@Y),
     );
 
     #
