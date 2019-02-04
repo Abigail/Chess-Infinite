@@ -23,6 +23,7 @@ use Chess::Infinite::Piece::Camel;
 use Chess::Infinite::Piece::Alfil;
 use Chess::Infinite::Piece::King;
 use Chess::Infinite::Piece::DrunkenElephant;
+use Chess::Infinite::Piece::Zebra;
 
 
 1;
