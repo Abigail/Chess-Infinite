@@ -17,6 +17,7 @@ fieldhash my %been_here;
 fieldhash my %move_list;
 fieldhash my %value_list;
 fieldhash my %trapped;
+fieldhash my %rides;
 
 sub new ($class) {
     bless \do {my $var} => $class;
@@ -100,6 +101,22 @@ sub value_list ($self) {
 # Returns the name of the piece. Must be overridden.
 #
 sub name ($self) {...}
+
+
+#
+# Set movements of the a piece.
+#
+sub set_ride ($self, $dx, $dy, $max_moves = undef) {
+    push @{$rides {$self} //= []} => [$dx, $dy, $max_moves];
+    $self;
+}
+
+#
+# Return the movements
+#
+sub rides ($self) {
+    @{$rides {$self} // []};
+}
 
 
 #
