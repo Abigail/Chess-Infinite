@@ -9,19 +9,15 @@ no  warnings 'syntax';
 use experimental 'signatures';
 use experimental 'lexical_subs';
 
-use parent 'Chess::Infinite::Piece::Leaper';
+use parent 'Chess::Infinite::Piece';
 
-################################################################################
 #
-# leaps
+# The Knight is a (1, 2) leaper
 #
-# Returns the positions a Knight can leap to, relative to the current
-# position. This assumes an infinite board, with no fields blocked.
-#
-################################################################################
-
-sub leaps ($self) {
-    return $self -> nm_leaps (1, 2);
+sub init ($self, @args) {
+    $self -> SUPER::init  (@args);
+    $self -> set_nm_leaps (1, 2);
+    $self;
 }
 
 
