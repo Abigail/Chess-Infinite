@@ -103,16 +103,16 @@ sub value_list ($self) {
 sub name ($self) {...}
 
 #
-# Sets the rides of an NM leaper
+# Sets the rides of an NM rider or leaper
 #
-sub set_nm_leaps ($self, $n, $m) {
+sub set_nm_rides ($self, $n, $m, $max_moves = 1) {
     my   @leaps = [$n, $m];
     push @leaps => map {[ $$_ [0], -$$_ [1]]} @leaps;
     push @leaps => map {[-$$_ [0],  $$_ [1]]} @leaps;
     push @leaps => map {[ $$_ [1],  $$_ [0]]} @leaps if $n != $m;
     
     foreach my $leap (@leaps) {
-        $self -> set_ride (@$leap, 1);
+        $self -> set_ride (@$leap, $max_moves);
     }
     $self;
 }

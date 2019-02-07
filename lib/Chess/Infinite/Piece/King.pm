@@ -16,8 +16,8 @@ use parent 'Chess::Infinite::Piece';
 #
 sub init ($self, @args) {
     $self -> SUPER::init (@args);
-    $self -> set_nm_leaps (1, 1);
-    $self -> set_nm_leaps (1, 0);
+    $self -> set_nm_rides (1, 1);
+    $self -> set_nm_rides (1, 0);
     $self;
 }
 
