@@ -161,7 +161,7 @@ sub candidate ($self, $dx, $dy, $max_moves) {
         last if     $self  -> been_here ($new_x, $new_y);
         last unless $board -> is_valid  ($new_x, $new_y);
         my $value = $board -> to_value  ($new_x, $new_y);
-        last if $best_value && $value < $best_value;
+        last if $best_value && $value > $best_value;
         #
         # We have a potential candidate; 
         #
