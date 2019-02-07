@@ -159,6 +159,20 @@ sub candidate ($self, $dx, $dy, $max_moves) {
 
 
 #
+# Return the position where the piece should move to, or undef if it's trapped.
+#
+sub target ($self) {
+    my ($best_x, $best_y, $best_value);
+    foreach my $ride (@{$rides {$self}}) {
+        my $candidate = $self -> candidate (@$ride) or next;
+        next if $best_value && $$candidate [-1] > $best_value;
+        ($best_x, $best_y, $best_value) = @$candidate;
+    }
+    return unless $best_value;
+    return wantarray ? ($best_x, $best_y) : [$best_x, $best_y];
+}
+
+#
 # Run: Move the piece until it gets trapped, or until we run out
 # of moves
 #
