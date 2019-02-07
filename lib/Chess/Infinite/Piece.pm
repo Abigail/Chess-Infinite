@@ -102,6 +102,21 @@ sub value_list ($self) {
 #
 sub name ($self) {...}
 
+#
+# Sets the rides of an NM leaper
+#
+sub set_nm_leaps ($self, $n, $m) {
+    my   @leaps = [$n, $m];
+    push @leaps => map {[ $$_ [0], -$$_ [1]]} @leaps;
+    push @leaps => map {[-$$_ [0],  $$_ [1]]} @leaps;
+    push @leaps => map {[ $$_ [1],  $$_ [0]]} @leaps if $n != $m;
+    
+    foreach my $leap (@leaps) {
+        $self -> set_ride (@$leap, 1);
+    }
+    $self;
+}
+
 
 #
 # Set movements of the a piece.
