@@ -13,6 +13,7 @@ our $VERSION = '2019012901';
 
 use SVG;
 use List::Util qw [min max];
+use Colour::Name;
 
 my $SIZE          = 750;
 my $LEFT_MARGIN   =  10;
@@ -20,6 +21,9 @@ my $RIGHT_MARGIN  =  10;
 my $TOP_MARGIN    =  10;
 my $BOTTOM_MARGIN =  10;
 my $MIN_SCALE     =  10;
+
+my @COLOURS       = qw [Red Blue Green Yellow];
+my $STEPS         =  64;
 
 my $extension     = "svg";
 
@@ -90,6 +94,32 @@ sub route ($class, %args) {
             }
         )
     }
+
+    my $colour_steps = @COLOURS - 1;
+    say "colour_steps = $colour_steps; STEPS = $STEPS";
+    foreach my $step (0 .. ($colour_steps - 1)) {
+        my $from_colour = $COLOURS [$step];
+        my $to_colour   = $COLOURS [$step + 1];
+
+        my $from = int (.5 + ($step + 0) * $STEPS / $colour_steps);
+        my $to   = int (.5 + ($step + 1) * $STEPS / $colour_steps);
+
+        say "$from_colour <-> $to_colour;  $from <-> $to";
+
+        foreach my $inner_step ($from .. ($to - 1)) {
+            say "  inner_step: $inner_step";
+        }
+    }
+
+ #  foreach my $step (0 .. $STEPS - 1) {
+ #      my $from            = int (.5 + ($step + 0) * @X / $STEPS);
+ #      my $to              = int (.5 + ($step + 1) * @X / $STEPS);
+ #      my $from_colour_idx = int ($step * (@COLOURS - 1) / $STEPS);
+ #      my $to_colour_idx   = $from_colour_idx + 1;
+ #      my $from_colour     = $COLOURS [$from_colour_idx] // "??";
+ #      my $to_colour       = $COLOURS [$to_colour_idx] // "??";
+ #      say "$from ... $to; $from_colour/$from_colour_idx <-> $to_colour";
+ #  }
 
     #
     # Draw the path
