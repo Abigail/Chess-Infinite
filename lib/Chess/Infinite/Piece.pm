@@ -147,7 +147,7 @@ sub candidate ($self, $dx, $dy, $max_moves) {
     my ($x, $y) = $self -> position;
     my $best_value;
     my $move_count = 0;
-    while ($move_count ++ < $max_moves) {
+    while (!$max_moves || $move_count ++ < $max_moves) {
         #
         # Next position to consider.
         #
