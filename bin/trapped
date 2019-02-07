@@ -37,6 +37,7 @@ my %piece2class = (
     fc king             =>  "King",
     fc drunken_elephant =>  "DrunkenElephant",
     fc zebra            =>  "Zebra",
+    fc bishop           =>  "Bishop",
 );
 
 die "'$board_name': no such board\n" unless    $board2class {$board_name};

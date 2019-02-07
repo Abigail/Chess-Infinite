@@ -24,6 +24,7 @@ use Chess::Infinite::Piece::Alfil;
 use Chess::Infinite::Piece::King;
 use Chess::Infinite::Piece::DrunkenElephant;
 use Chess::Infinite::Piece::Zebra;
+use Chess::Infinite::Piece::Bishop;
 
 
 1;
