@@ -118,6 +118,45 @@ sub rides ($self) {
     @{$rides {$self} // []};
 }
 
+#
+# Given a direction of movement, return the position it should move to.
+# Starting from the current position we move along the given direction
+# ($dx, $dy) stopping if any of the following is true:
+#    - we hit a position we've already been
+#    - we exceed max moves (if given)
+#    - the value of the position starts increasing
+#
+sub candidate ($self, $dx, $dy, $max_moves) {
+    return if     $self -> trapped;
+    my $board   = $self -> board;
+    my ($x, $y) = $self -> position;
+    my $best_value;
+    my $move_count = 0;
+    while ($move_count ++ < $max_moves) {
+        #
+        # Next position to consider.
+        #
+        my ($new_x, $new_y) = ($x + $dx, $y + $dy);
+
+        #
+        # If we have been there, we run outside of the board, or
+        # the value is higher than what we've already considered,
+        # we're done.
+        #
+        last if     $self  -> been_here ($new_x, $new_y);
+        last unless $board -> is_valid  ($new_x, $new_y);
+        my $value = $board -> to_value  ($new_x, $new_y);
+        last if $best_value && $value < $best_value;
+        #
+        # We have a potential candidate; 
+        #
+        ($x, $y) = ($new_x, $new_y);
+        $best_value = $value;
+    }
+    return unless $best_value;
+    return wantarray ? ($x, $y, $best_value) : [$x, $y, $best_value];
+}
+
 
 #
 # Run: Move the piece until it gets trapped, or until we run out
