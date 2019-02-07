@@ -49,7 +49,9 @@ my $piece_class = "Chess::Infinite::Piece::" . $piece2class {$piece_name};
 
 my $board = $board_class -> new -> init;
 my $piece = $piece_class -> new -> init (board  =>  $board);
-$piece -> run (max_moves => $max_moves);
+
+$piece -> run (max_moves => $max_moves,
+               start     => $start);
 
 say $piece -> summary;
 
