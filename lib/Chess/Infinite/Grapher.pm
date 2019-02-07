@@ -22,7 +22,7 @@ my $TOP_MARGIN    =  10;
 my $BOTTOM_MARGIN =  10;
 my $MIN_SCALE     =  10;
 
-my @COLOURS       = qw [Red Blue Green Yellow];
+my $COLOURS       = [qw [Red Blue Green Goldenrod]];
 my $STEPS         =  64;
 
 my $extension     = "svg";
@@ -34,7 +34,99 @@ my sub file_name ($piece, $type) {
     $name . "-" . $type . "." . $extension;
 }
 
+#
+# Draws part of a path, doing a blend between two colours; we'll start
+# with the from_colour, and end *one step* away from the end_colour
+# (that way, a next sub path can start with that colour), unless the
+# "is_last" flag was set.
+#
+my sub draw_sub_path (%args) {
+    my $from_colour   = rgb $args {from_colour}, $RGB_TRIPLET;
+    my $to_colour     = rgb $args {to_colour},   $RGB_TRIPLET;
+    my $steps         = $args {steps};
+    my $X             = $args {X};
+    my $Y             = $args {Y};
+    my $is_last       = $args {is_last};
+    my $svg           = $args {svg};
 
+    state $path_count = 0;
+
+    #
+    # Blends is the number of times we 'blend' from one colour to the
+    # other; it's usually the same as 'steps', so we're left with one
+    # step away from the target colour. But if we're the sub path, we
+    # want to finish on the target colour. Adjusting 'blends' just gets
+    # us there.
+    #
+    my $blends = $steps;
+       $blends -- if $is_last && $blends > 1;
+    foreach my $step (0 .. $steps - 1) {
+        my $from = int (.5 + ($step + 0) * $#$X / $steps);
+        my $to   = int (.5 + ($step + 1) * $#$X / $steps);
+        my @rgb  = map {
+                   int (.5 + ($blends - $step) * $$from_colour [$_] / $blends +
+                                        $step  * $$to_colour   [$_] / $blends)}
+                   keys @$from_colour;
+
+        #
+        # Draw the section of the path with the right colour
+        #
+        my $points = $svg -> get_path (
+            x    =>  [@$X [$from .. $to]],
+            y    =>  [@$Y [$from .. $to]],
+           -type => 'path',
+        );
+
+        $svg -> path (
+            %$points,
+            id    =>  "path-" . ++ $path_count,
+            style => {
+                'fill-opacity' => 0,
+                'stroke'       => do {local $" = ","; "rgb(@rgb)"},
+            },
+        );
+    }
+}
+
+
+
+my sub draw_path (%args) {
+    my $colours = $args {colours};
+    my $svg     = $args {svg};
+    my @X       = @{$args {X}};
+    my @Y       = @{$args {Y}};
+    my $steps   = $args {steps};
+
+    my $colour_steps = @$colours - 1;
+    foreach my $colour_step (0 .. ($colour_steps - 1)) {
+        my $from_colour = $$colours [$colour_step];
+        my $to_colour   = $$colours [$colour_step + 1];
+
+        #
+        # Calculate how many steps we have to take for this blend
+        #
+        my $steps = int (.5 + ($colour_step + 1) * $steps / $colour_steps) -
+                    int (.5 + ($colour_step + 0) * $steps / $colour_steps);
+
+        my $from  = int (.5 + ($colour_step + 0) * @X / $colour_steps);
+        my $to    = int (.5 + ($colour_step + 1) * @X / $colour_steps);
+
+        #
+        # Mark the last sub path; we also need one point less.
+        #
+        my $is_last = $colour_step == $colour_steps - 1;
+        $to -- if $is_last;
+
+        draw_sub_path from_colour => $from_colour,
+                      to_colour   => $to_colour,
+                      steps       => $steps,
+                      X           => [@X [$from .. $to]],
+                      Y           => [@Y [$from .. $to]],
+                      svg         => $svg,
+                      is_last     => $is_last,
+        ;
+    }
+}
 
 sub route ($class, %args) {
     my $piece     = $args {piece};
@@ -95,49 +187,14 @@ sub route ($class, %args) {
         )
     }
 
-    my $colour_steps = @COLOURS - 1;
-    say "colour_steps = $colour_steps; STEPS = $STEPS";
-    foreach my $step (0 .. ($colour_steps - 1)) {
-        my $from_colour = $COLOURS [$step];
-        my $to_colour   = $COLOURS [$step + 1];
+    draw_path  colours => $args {colours} ? [split /,/ => $args {colours}]
+                                          : $COLOURS,
+               svg     => $svg,
+               X       => \@X,
+               Y       => \@Y,
+               steps   => $args {steps} || $STEPS,
+    ;
 
-        my $from = int (.5 + ($step + 0) * $STEPS / $colour_steps);
-        my $to   = int (.5 + ($step + 1) * $STEPS / $colour_steps);
-
-        say "$from_colour <-> $to_colour;  $from <-> $to";
-
-        foreach my $inner_step ($from .. ($to - 1)) {
-            say "  inner_step: $inner_step";
-        }
-    }
-
- #  foreach my $step (0 .. $STEPS - 1) {
- #      my $from            = int (.5 + ($step + 0) * @X / $STEPS);
- #      my $to              = int (.5 + ($step + 1) * @X / $STEPS);
- #      my $from_colour_idx = int ($step * (@COLOURS - 1) / $STEPS);
- #      my $to_colour_idx   = $from_colour_idx + 1;
- #      my $from_colour     = $COLOURS [$from_colour_idx] // "??";
- #      my $to_colour       = $COLOURS [$to_colour_idx] // "??";
- #      say "$from ... $to; $from_colour/$from_colour_idx <-> $to_colour";
- #  }
-
-    #
-    # Draw the path
-    #
-    my $points = $svg -> get_path (
-        x    =>  \@X,
-        y    =>  \@Y,
-       -type => 'path',
-    );
-
-    $svg -> path (
-        %$points,
-        id    =>  'path',
-        style => {
-            'fill-opacity' => 0,
-            'stroke'       => 'red',
-        },
-    );
 
     my $xml = $svg -> xmlify;
 
