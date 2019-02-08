@@ -25,11 +25,13 @@ use Chess::Infinite::Board::Spiral;
 # Pieces
 #
 
-my @CHESS   = qw [King Queen Rook Bishop Knight];
-my @LEAPERS = qw [Knight Ferz Alfil Camel Zebra];
-my @SHOGI   = qw [DrunkenElephant];
+my @CHESS       = qw [King Queen Rook Bishop Knight];
+my @LEAPERS     = qw [Knight Ferz Alfil Camel Zebra];
+my @SHOGI       = qw [King Rook Bishop GoldGeneral];
+my @LARGE_SHOGI = qw [DrunkenElephant];
 
-my @PIECES  = do {my %seen; grep {!$seen {$_} ++} @CHESS, @LEAPERS, @SHOGI};
+my @PIECES  = do {my %seen; grep {!$seen {$_} ++}
+                     @CHESS, @LEAPERS, @SHOGI, @LARGE_SHOGI};
 
 my %prefix_name;
 my %full_name;
