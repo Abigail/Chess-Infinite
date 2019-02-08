@@ -15,9 +15,9 @@ use parent 'Chess::Infinite::Piece';
 #
 # The Lance moves an unlimited number of fields straight ahead.
 #
-sub init ($self, %args) {
-    $self -> SUPER::init (%args);
-    $self -> set_ride (0, -1, 0, heading => $args {heading});
+sub init ($self, @args) {
+    $self -> SUPER::init (@args);
+    $self -> set_ride (0, -1, 0);
     $self;
 }
 

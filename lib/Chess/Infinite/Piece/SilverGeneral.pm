@@ -14,10 +14,10 @@ use parent 'Chess::Infinite::Piece';
 #
 # The Silver General moves 1 field in diagonally, or straight ahead.
 #
-sub init ($self, %args) {
-    $self -> SUPER::init (%args);
+sub init ($self, @args) {
+    $self -> SUPER::init (@args);
     $self -> set_nm_rides (1, 1);
-    $self -> set_ride (0, -1, 1, heading => $args {heading});
+    $self -> set_ride (0, -1, 1);
     $self;
 }
 

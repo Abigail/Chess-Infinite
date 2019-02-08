@@ -18,6 +18,7 @@ fieldhash my %move_list;
 fieldhash my %value_list;
 fieldhash my %trapped;
 fieldhash my %rides;
+fieldhash my %heading;
 
 sub new ($class) {
     bless \do {my $var} => $class;
@@ -29,7 +30,8 @@ sub init ($self, %args) {
     #
     # Where are we moving on?
     #
-    $self -> set_board ($args {board});
+    $self -> set_board   ($args {board});
+    $self -> set_heading ($args {heading}) if $args {heading};
 
     $self;
 }
@@ -52,6 +54,18 @@ sub set_position ($self, $x, $y, $value = undef) {
 }
 sub position ($self) {
     wantarray ? @{$position {$self}} : [@{$position {$self}}];
+}
+
+#
+# Set/return a heading
+#
+sub set_heading ($self, $heading) {
+    $heading {$self} = $heading;
+    $self;
+}
+
+sub heading ($self) {
+    $heading {$self} // "";
 }
 
 
@@ -127,8 +141,8 @@ sub set_nm_rides ($self, $n, $m, $max_moves = 1) {
 #
 # Set movements of the a piece.
 #
-sub set_ride ($self, $dx, $dy, $max_moves = undef, %args) {
-    my $heading = lc ($args {heading} // "");
+sub set_ride ($self, $dx, $dy, $max_moves = undef) {
+    my $heading = $self -> heading;
     if    ($heading eq 'east')  {($dx, $dy) = (-$dy,  $dx);}
     elsif ($heading eq 'south') {($dx, $dy) = (-$dx, -$dy);}
     elsif ($heading eq 'west')  {($dx, $dy) = ( $dy, -$dx);}
