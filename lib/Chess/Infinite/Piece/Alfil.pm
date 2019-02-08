@@ -22,8 +22,6 @@ sub init ($self, @args) {
 }
 
 
-sub name ($self) {"Alfil"}
-
 1;
 
 __END__

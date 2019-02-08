@@ -22,7 +22,6 @@ sub init ($self, @args) {
 }
 
 
-sub name ($self) {"Lance"}
 
 1;
 

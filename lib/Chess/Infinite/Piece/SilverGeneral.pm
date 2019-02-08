@@ -21,7 +21,6 @@ sub init ($self, @args) {
     $self;
 }
 
-sub name ($self) {"Silver General"}
 
 1;
 

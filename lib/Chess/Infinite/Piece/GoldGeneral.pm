@@ -31,7 +31,6 @@ sub alternative_names ($class) {
     "Golden General";
 }
 
-sub name ($self) {"Gold General"}
 
 1;
 

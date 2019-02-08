@@ -25,7 +25,6 @@ sub init ($self, @args) {
 #
 sub alternative_names ($class) {qw [N]}
 
-sub name ($self) {"Knight"}
 
 1;
 

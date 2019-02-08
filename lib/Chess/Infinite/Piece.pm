@@ -19,6 +19,7 @@ fieldhash my %value_list;
 fieldhash my %trapped;
 fieldhash my %rides;
 fieldhash my %heading;
+fieldhash my %name;
 
 sub new ($class) {
     bless \do {my $var} => $class;
@@ -32,6 +33,7 @@ sub init ($self, %args) {
     #
     $self -> set_board   ($args {board});
     $self -> set_heading ($args {heading}) if $args {heading};
+    $self -> set_name    ($args {name});
 
     $self;
 }
@@ -54,6 +56,18 @@ sub set_position ($self, $x, $y, $value = undef) {
 }
 sub position ($self) {
     wantarray ? @{$position {$self}} : [@{$position {$self}}];
+}
+
+#
+# Set/return the name
+#
+sub set_name ($self, $name) {
+    $name {$self} = $name;
+    $self;
+}
+
+sub name ($self) {
+    $name {$self}
 }
 
 #
@@ -115,11 +129,6 @@ sub value_list ($self) {
     wantarray ? @$value_list : $value_list;
 }
 
-
-#
-# Returns the name of the piece. Must be overridden.
-#
-sub name ($self) {...}
 
 #
 # Sets the rides of an NM rider or leaper
@@ -260,7 +269,7 @@ sub summary ($self) {
     my $summary    = "";
 
     $summary = sprintf "%s %s on value %d (%d, %d) after %d moves.\n" =>
-                        ucfirst lc $self -> name,
+                        ucfirst $self -> name,
                         $trapped ? "trapped" : "arrived",
                         $$value_list [-1],
                         @{$$move_list [-1]},

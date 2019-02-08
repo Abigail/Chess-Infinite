@@ -23,7 +23,6 @@ sub init ($self, @args) {
 }
 
 
-sub name ($self) {"Queen"}
 
 1;
 

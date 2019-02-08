@@ -48,22 +48,25 @@ foreach my $piece (@PIECES) {
             die "Name class for $piece; $name is already used by class " .
                 $full_name {$str} . "\n";
         }
-        $full_name {$str} = $class;
+        my $piece_name = $name =~ s/(\p{Ll})(\p{Lu})/$1 $2/gr;
+        $full_name {$str} = [$piece_name, $class];
         foreach my $n (1 .. length $str) {
             my $prefix = substr $str, 0, $n;
             #
             # First come, first serve.
             #
-            $prefix_name {$prefix} //= $class;
+            $prefix_name {$prefix} //= [$piece_name, $class];
         }
     }
 }
 
 sub piece ($name, @args) {
-    my $str   = (lc $name) =~ s/[^a-z0-9]+//gr;
-    my $class = $full_name {$str} || $prefix_name {$str} or return;
+    my $str  = (lc $name) =~ s/[^a-z0-9]+//gr;
+    my $info = $full_name {$str} || $prefix_name {$str} or return;
 
-    $class -> new -> init (@args);
+    my ($piece_name, $class) = @$info;
+
+    $class -> new -> init (@args, name => $piece_name);
 }
 
 1;
