@@ -26,6 +26,7 @@ use Chess::Infinite::Piece::DrunkenElephant;
 use Chess::Infinite::Piece::Zebra;
 use Chess::Infinite::Piece::Bishop;
 use Chess::Infinite::Piece::Rook;
+use Chess::Infinite::Piece::Queen;
 
 
 1;

@@ -40,6 +40,7 @@ my %piece2class = (
     fc zebra            =>  "Zebra",
     fc bishop           =>  "Bishop",
     fc rook             =>  "Rook",
+    fc queen            =>  "Queen",
 );
 
 die "'$board_name': no such board\n" unless    $board2class {$board_name};
@@ -53,7 +54,7 @@ my $piece = $piece_class -> new -> init (board    =>  $board,
                                          heading  =>  $heading);
 
 $piece -> run (max_moves => $max_moves,
-               start     => $start);
+               start     => $start,);
 
 say $piece -> summary;
 
