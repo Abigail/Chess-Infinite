@@ -112,7 +112,8 @@ sub set_nm_rides ($self, $n, $m, $max_moves = 1) {
     push @leaps => map {[ $$_ [1],  $$_ [0]]} @leaps if $n != $m;
     
     foreach my $leap (@leaps) {
-        $self -> set_ride (@$leap, $max_moves);
+        my ($x, $y) = @$leap;
+        $self -> set_ride ($x, $y, $max_moves);
     }
     $self;
 }
@@ -121,7 +122,11 @@ sub set_nm_rides ($self, $n, $m, $max_moves = 1) {
 #
 # Set movements of the a piece.
 #
-sub set_ride ($self, $dx, $dy, $max_moves = undef) {
+sub set_ride ($self, $dx, $dy, $max_moves = undef, %args) {
+    my $heading = lc ($args {heading} // "");
+    if    ($heading eq 'east')  {($dx, $dy) = (-$dy,  $dx);}
+    elsif ($heading eq 'south') {($dx, $dy) = (-$dx, -$dy);}
+    elsif ($heading eq 'west')  {($dx, $dy) = ( $dy, -$dx);}
     push @{$rides {$self} //= []} => [$dx, $dy, $max_moves];
     $self;
 }

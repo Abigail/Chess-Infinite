@@ -19,6 +19,7 @@ GetOptions  "piece=s"      =>  \(my $piece_name = "knight"),
             "board=s"      =>  \(my $board_name = "spiral"),
             "start=i"      =>  \(my $start      =  1),
             "max_moves=i"  =>  \(my $max_moves  =  10_000),
+            "heading=s"    =>  \ my $heading,
 ;
 
 $board_name = fc $board_name;
@@ -48,7 +49,8 @@ my $board_class = "Chess::Infinite::Board::" . $board2class {$board_name};
 my $piece_class = "Chess::Infinite::Piece::" . $piece2class {$piece_name};
 
 my $board = $board_class -> new -> init;
-my $piece = $piece_class -> new -> init (board  =>  $board);
+my $piece = $piece_class -> new -> init (board    =>  $board,
+                                         heading  =>  $heading);
 
 $piece -> run (max_moves => $max_moves,
                start     => $start);
