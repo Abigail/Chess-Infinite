@@ -17,16 +17,17 @@ use Chess::Infinite::Board::Spiral;
 #
 # Pieces
 #
-use Chess::Infinite::Piece::Knight;
-use Chess::Infinite::Piece::Ferz;
-use Chess::Infinite::Piece::Camel;
-use Chess::Infinite::Piece::Alfil;
-use Chess::Infinite::Piece::King;
-use Chess::Infinite::Piece::DrunkenElephant;
-use Chess::Infinite::Piece::Zebra;
-use Chess::Infinite::Piece::Bishop;
-use Chess::Infinite::Piece::Rook;
-use Chess::Infinite::Piece::Queen;
+
+my @CHESS   = qw [Queen Rook Bishop Knight King];
+my @LEAPERS = qw [Knight Ferz Alfil Camel Zebra];
+my @SHOGI   = qw [DrunkenElephant];
+
+my @PIECES  = do {my %seen; grep {!$seen {$_} ++} @CHESS, @LEAPERS, @SHOGI};
+
+foreach my $piece (@PIECES) {
+    my $class = "Chess::Infinite::Piece::$piece";
+    eval "use $class; 1" or do "Failed to load $class: $!";
+}
 
 
 1;
