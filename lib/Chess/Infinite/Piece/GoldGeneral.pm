@@ -28,7 +28,13 @@ sub init ($self, @args) {
 }
 
 sub alternative_names ($class) {
-    "Golden General";
+    "Golden General",
+    "Promoted Silver General",
+    "Promoted Shogi Knight",
+    "Promoted Knight",
+    "Promoted Lance",
+    "Promoted Pawn",
+    "Promoted Shogi Pawn",
 }
 
 
