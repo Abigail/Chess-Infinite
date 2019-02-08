@@ -27,7 +27,7 @@ use Chess::Infinite::Board::Spiral;
 
 my @CHESS       = qw [King Queen Rook Bishop Knight];
 my @LEAPERS     = qw [Knight Ferz Alfil Camel Zebra];
-my @SHOGI       = qw [King Rook Bishop GoldGeneral];
+my @SHOGI       = qw [King Rook Bishop GoldGeneral SilverGeneral];
 my @LARGE_SHOGI = qw [DrunkenElephant];
 
 my @PIECES  = do {my %seen; grep {!$seen {$_} ++}
