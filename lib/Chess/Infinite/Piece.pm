@@ -35,6 +35,11 @@ sub init ($self, %args) {
 }
 
 #
+# Class method, can be used for piece which have an alternative name.
+#
+sub alternative_names ($class) {return;}
+
+#
 # Set/return a position
 #
 sub set_position ($self, $x, $y, $value = undef) {

@@ -20,6 +20,10 @@ sub init ($self, @args) {
     $self;
 }
 
+#
+# Class method
+#
+sub alternative_names ($class) {qw [N]}
 
 sub name ($self) {"Knight"}
 

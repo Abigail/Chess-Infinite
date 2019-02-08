@@ -29,29 +29,15 @@ my %board2class = (
     fc spiral      =>  "Spiral"
 );
 
-my %piece2class = (
-    fc knight           =>  "Knight",
-    fc kn               =>  "Knight",
-    fc ferz             =>  "Ferz",
-    fc camel            =>  "Camel",
-    fc alfil            =>  "Alfil",
-    fc king             =>  "King",
-    fc drunken_elephant =>  "DrunkenElephant",
-    fc zebra            =>  "Zebra",
-    fc bishop           =>  "Bishop",
-    fc rook             =>  "Rook",
-    fc queen            =>  "Queen",
-);
 
 die "'$board_name': no such board\n" unless    $board2class {$board_name};
-die "'$piece_name': no such piece\n" unless    $piece2class {$piece_name};
 
 my $board_class = "Chess::Infinite::Board::" . $board2class {$board_name};
-my $piece_class = "Chess::Infinite::Piece::" . $piece2class {$piece_name};
 
 my $board = $board_class -> new -> init;
-my $piece = $piece_class -> new -> init (board    =>  $board,
-                                         heading  =>  $heading);
+my $piece = piece $piece_name, board    =>  $board,
+                               heading  =>  $heading
+            or die "'$piece_name': No such piece\n";
 
 $piece -> run (max_moves => $max_moves,
                start     => $start,);

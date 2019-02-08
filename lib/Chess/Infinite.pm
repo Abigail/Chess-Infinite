@@ -1,11 +1,18 @@
 package Chess::Infinite;
 
-use 5.010;
+use 5.028;
 use strict;
 use warnings;
 no  warnings 'syntax';
 
+use experimental 'signatures';
+use experimental 'lexical_subs';
+
 our $VERSION = '2019012901';
+
+use Exporter ();
+our @ISA    = qw [Exporter];
+our @EXPORT = qw [piece];
 
 use Chess::Infinite::Grapher;
 
@@ -18,17 +25,43 @@ use Chess::Infinite::Board::Spiral;
 # Pieces
 #
 
-my @CHESS   = qw [Queen Rook Bishop Knight King];
+my @CHESS   = qw [King Queen Rook Bishop Knight];
 my @LEAPERS = qw [Knight Ferz Alfil Camel Zebra];
 my @SHOGI   = qw [DrunkenElephant];
 
 my @PIECES  = do {my %seen; grep {!$seen {$_} ++} @CHESS, @LEAPERS, @SHOGI};
 
+my %prefix_name;
+my %full_name;
+
 foreach my $piece (@PIECES) {
     my $class = "Chess::Infinite::Piece::$piece";
     eval "use $class; 1" or do "Failed to load $class: $!";
+
+    my %done;
+    foreach my $name ($piece, $class -> alternative_names) {
+        my $str = (lc $name) =~ s/[^a-z0-9]+//gr;
+        if ($full_name {$str}) {
+            die "Name class for $piece; $name is already used by class " .
+                $full_name {$str} . "\n";
+        }
+        $full_name {$str} = $class;
+        foreach my $n (1 .. length $str) {
+            my $prefix = substr $str, 0, $n;
+            #
+            # First come, first serve.
+            #
+            $prefix_name {$prefix} //= $class;
+        }
+    }
 }
 
+sub piece ($name, @args) {
+    my $str   = (lc $name) =~ s/[^a-z0-9]+//gr;
+    my $class = $full_name {$str} || $prefix_name {$str} or return;
+
+    $class -> new -> init (@args);
+}
 
 1;
 
