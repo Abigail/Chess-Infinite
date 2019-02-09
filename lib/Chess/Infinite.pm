@@ -20,23 +20,25 @@ use Chess::Infinite::Grapher;
 # Boards
 #
 use Chess::Infinite::Board::Spiral;
+use Chess::Infinite::Board::Triangle;
 
 #
 # Pieces
 #
 
-my @CHESS       = qw [King Queen Rook Bishop Knight];
-my @KNIGHTED    = qw [Archbishop Chancellor Amazon];
-my @LEAPERS     = qw [Knight Ferz Alfil Tripper Camel Zebra Wazir
-                      Dabbaba Threeleaper];
-my @OMEGA       = qw [Champion Wizard];
-my @SHOGI       = qw [King Rook DragonKing Bishop DragonHorse
-                           ShogiKnight
-                           GoldGeneral SilverGeneral Lance];
-my @LARGE_SHOGI = qw [DrunkenElephant];
+my @CHESS          = qw [King Queen Rook Bishop Knight];
+my @CHESS_COMBINED = qw [Archbishop Chancellor Amazon Samurai Monk];
+my @LEAPERS        = qw [Knight Ferz Alfil Tripper Camel Zebra Wazir
+                         Dabbaba Threeleaper];
+my @OMEGA          = qw [Champion Wizard];
+my @SHOGI          = qw [King Rook DragonKing Bishop DragonHorse
+                              ShogiKnight
+                              GoldGeneral SilverGeneral Lance];
+my @LARGE_SHOGI    = qw [DrunkenElephant];
 
 my @PIECES  = do {my %seen; grep {!$seen {$_} ++}
-                     @CHESS, @KNIGHTED, @OMEGA, @LEAPERS, @SHOGI, @LARGE_SHOGI};
+                     @CHESS, @CHESS_COMBINED, @LEAPERS, @OMEGA,
+                     @SHOGI, @LARGE_SHOGI};
 
 my %prefix_name;
 my %full_name;
