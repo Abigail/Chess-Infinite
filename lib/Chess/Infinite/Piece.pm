@@ -167,6 +167,18 @@ sub rides ($self) {
 }
 
 #
+# Return true of the movement of the piece is colour bound.
+# This is the case if all 'rides' are colour bound, which is
+# the case if dx + dy is even.
+#
+sub is_colour_bound ($self) {
+    foreach my $ride ($self -> rides) {
+        return 0 if ($$ride [0] + $$ride [1]) % 2;
+    }
+    return 1;
+}
+
+#
 # Given a direction of movement, return the position it should move to.
 # Starting from the current position we move along the given direction
 # ($dx, $dy) stopping if any of the following is true:
@@ -303,9 +315,10 @@ sub summary ($self) {
         $first_unused = 1;
     }
     else {
-        foreach (my $i = 1; $i < @values; $i ++) {
-            if ($values [$i - 1] + 1 != $values [$i]) {
-                $first_unused = $values [$i - 1] + 1;
+        my $increment = $self -> is_colour_bound ? 2 : 1;
+        foreach (my $i = 1; $i < @values; $i += $increment) {
+            if ($values [$i - 1] + $increment != $values [$i]) {
+                $first_unused = $values [$i - 1] + $increment;
                 last;
             }
         }
