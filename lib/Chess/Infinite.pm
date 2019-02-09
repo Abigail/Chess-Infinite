@@ -31,7 +31,7 @@ my @CHESS_COMBINED = qw [Archbishop Chancellor Amazon Samurai Monk];
 my @LEAPERS        = qw [Knight Ferz Alfil Tripper Camel Zebra Wazir
                          Dabbaba Threeleaper];
 my @OMEGA          = qw [Champion Wizard];
-my @XIANGQI        = qw [Rook];
+my @XIANGQI        = qw [Rook Horse];
 my @SHOGI          = qw [King Rook DragonKing Bishop DragonHorse
                               ShogiKnight
                               GoldGeneral SilverGeneral Lance];
