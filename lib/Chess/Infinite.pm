@@ -31,13 +31,14 @@ my @CHESS_COMBINED = qw [Archbishop Chancellor Amazon Samurai Monk];
 my @LEAPERS        = qw [Knight Ferz Alfil Tripper Camel Zebra Wazir
                          Dabbaba Threeleaper];
 my @OMEGA          = qw [Champion Wizard];
+my @XIANGQI        = qw [Rook];
 my @SHOGI          = qw [King Rook DragonKing Bishop DragonHorse
                               ShogiKnight
                               GoldGeneral SilverGeneral Lance];
 my @LARGE_SHOGI    = qw [DrunkenElephant];
 
 my @PIECES  = do {my %seen; grep {!$seen {$_} ++}
-                     @CHESS, @CHESS_COMBINED, @LEAPERS, @OMEGA,
+                     @CHESS, @CHESS_COMBINED, @LEAPERS, @OMEGA, @XIANGQI,
                      @SHOGI, @LARGE_SHOGI};
 
 my %prefix_name;

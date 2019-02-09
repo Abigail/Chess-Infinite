@@ -22,6 +22,10 @@ sub init ($self, @args) {
 }
 
 
+sub alternative_names ($self) {
+    "Chariot",          # Xiangqi
+}
+
 
 1;
 
