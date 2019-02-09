@@ -273,7 +273,7 @@ sub summary ($self) {
                         $trapped ? "trapped" : "arrived",
                         $$value_list [-1],
                         @{$$move_list [-1]},
-                        scalar @$move_list;
+                        @$move_list - 1;
 
     #
     # Find the binding box
