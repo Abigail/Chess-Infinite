@@ -25,7 +25,8 @@ GetOptions  "piece=s"      =>  \(my $piece_name = "knight"),
 $board_name = fc $board_name;
 
 my %board2class = (
-    fc spiral      =>  "Spiral"
+    fc spiral      =>  "Spiral",
+    fc triangle    =>  "Triangle",
 );
 
 
