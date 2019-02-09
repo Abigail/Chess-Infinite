@@ -9,23 +9,19 @@ no  warnings 'syntax';
 use experimental 'signatures';
 use experimental 'lexical_subs';
 
-use parent 'Chess::Infinite::Piece::Leaper';
+use parent 'Chess::Infinite::Piece';
 
-################################################################################
-#
-# leaps
-#
-# Returns the positions a Camel can leap to, relative to the current
-# position. This assumes an infinite board, with no fields blocked.
-#
-################################################################################
 
-sub leaps ($self) {
-    return $self -> nm_leaps (3, 1);
+#
+# The Camel is a (3, 1) leaper.
+#
+sub init ($self, @args) {
+    $self -> SUPER::init (@args);
+    $self -> set_nm_rides (3, 1);
+    $self;
 }
 
 
-sub name ($self) {"Camel"}
 
 1;
 

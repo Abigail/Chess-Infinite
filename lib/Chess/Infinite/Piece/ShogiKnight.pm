@@ -1,4 +1,4 @@
-package Chess::Infinite::Piece::Knight;
+package Chess::Infinite::Piece::ShogiKnight;
 
 use 5.028;
 
@@ -12,18 +12,14 @@ use experimental 'lexical_subs';
 use parent 'Chess::Infinite::Piece';
 
 #
-# The Knight is a (1, 2) leaper
+# The Shogi knight move 2 fields forward, and 1 field sideways.
 #
 sub init ($self, @args) {
     $self -> SUPER::init  (@args);
-    $self -> set_nm_rides (1, 2);
+    $self -> set_ride (-1, -2, 1);
+    $self -> set_ride ( 1, -2, 1);
     $self;
 }
-
-#
-# Class method
-#
-sub alternative_names ($class) {qw [N]}
 
 
 1;

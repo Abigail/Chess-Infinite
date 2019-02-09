@@ -9,30 +9,22 @@ no  warnings 'syntax';
 use experimental 'signatures';
 use experimental 'lexical_subs';
 
-use parent 'Chess::Infinite::Piece::Leaper';
+use parent 'Chess::Infinite::Piece';
 
-################################################################################
 #
-# leaps
+# The Drunken Elephant steps 1 field in any direction, except backwards.
 #
-# Returns the positions a Drunken Elephant can leap to, relative to the current
-# position. This assumes an infinite board, with no fields blocked.
-#
-################################################################################
-
-sub leaps ($self) {
-    my @leaps;
+sub init ($self, @args) {
+    $self -> SUPER::init (@args);
     foreach my $x (-1 .. 1) {
         foreach my $y (-1 .. 1) {
-            push @leaps => [$x, $y] if $x || $y == -1;
+            $self -> set_ride ($x, $y, 1) if $x || $y == -1;
         }
     }
-
-    @leaps;
+    $self;
 }
 
 
-sub name ($self) {"Drunken Elephant"}
 
 1;
 

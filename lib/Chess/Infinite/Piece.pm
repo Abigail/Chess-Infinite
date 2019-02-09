@@ -17,6 +17,9 @@ fieldhash my %been_here;
 fieldhash my %move_list;
 fieldhash my %value_list;
 fieldhash my %trapped;
+fieldhash my %rides;
+fieldhash my %heading;
+fieldhash my %name;
 
 sub new ($class) {
     bless \do {my $var} => $class;
@@ -28,10 +31,17 @@ sub init ($self, %args) {
     #
     # Where are we moving on?
     #
-    $self -> set_board ($args {board});
+    $self -> set_board   ($args {board});
+    $self -> set_heading ($args {heading}) if $args {heading};
+    $self -> set_name    ($args {name});
 
     $self;
 }
+
+#
+# Class method, can be used for piece which have an alternative name.
+#
+sub alternative_names ($class) {return;}
 
 #
 # Set/return a position
@@ -46,6 +56,30 @@ sub set_position ($self, $x, $y, $value = undef) {
 }
 sub position ($self) {
     wantarray ? @{$position {$self}} : [@{$position {$self}}];
+}
+
+#
+# Set/return the name
+#
+sub set_name ($self, $name) {
+    $name {$self} = $name;
+    $self;
+}
+
+sub name ($self) {
+    $name {$self}
+}
+
+#
+# Set/return a heading
+#
+sub set_heading ($self, $heading) {
+    $heading {$self} = $heading;
+    $self;
+}
+
+sub heading ($self) {
+    $heading {$self} // "";
 }
 
 
@@ -97,10 +131,106 @@ sub value_list ($self) {
 
 
 #
-# Returns the name of the piece. Must be overridden.
+# Sets the rides of an NM rider or leaper
 #
-sub name ($self) {...}
+sub set_nm_rides ($self, $n, $m, $max_moves = 1) {
+    my   @leaps = [$n, $m];
+    push @leaps => map {[ $$_ [0], -$$_ [1]]} @leaps;
+    push @leaps => map {[-$$_ [0],  $$_ [1]]} @leaps;
+    push @leaps => map {[ $$_ [1],  $$_ [0]]} @leaps if $n != $m;
+    
+    foreach my $leap (@leaps) {
+        my ($x, $y) = @$leap;
+        $self -> set_ride ($x, $y, $max_moves);
+    }
+    $self;
+}
 
+
+#
+# Set movements of the a piece.
+#
+sub set_ride ($self, $dx, $dy, $max_moves = undef) {
+    my $heading = $self -> heading;
+    if    ($heading eq 'east')  {($dx, $dy) = (-$dy,  $dx);}
+    elsif ($heading eq 'south') {($dx, $dy) = (-$dx, -$dy);}
+    elsif ($heading eq 'west')  {($dx, $dy) = ( $dy, -$dx);}
+    push @{$rides {$self} //= []} => [$dx, $dy, $max_moves];
+    $self;
+}
+
+#
+# Return the movements
+#
+sub rides ($self) {
+    @{$rides {$self} // []};
+}
+
+#
+# Return true of the movement of the piece is colour bound.
+# This is the case if all 'rides' are colour bound, which is
+# the case if dx + dy is even.
+#
+sub is_colour_bound ($self) {
+    foreach my $ride ($self -> rides) {
+        return 0 if ($$ride [0] + $$ride [1]) % 2;
+    }
+    return 1;
+}
+
+#
+# Given a direction of movement, return the position it should move to.
+# Starting from the current position we move along the given direction
+# ($dx, $dy) stopping if any of the following is true:
+#    - we hit a position we've already been
+#    - we exceed max moves (if given)
+#    - the value of the position starts increasing
+#
+sub candidate ($self, $dx, $dy, $max_moves) {
+    return if     $self -> trapped;
+    my $board   = $self -> board;
+    my ($x, $y) = $self -> position;
+    my $best_value;
+    my $move_count = 0;
+    while (!$max_moves || $move_count ++ < $max_moves) {
+        #
+        # Next position to consider.
+        #
+        my ($new_x, $new_y) = ($x + $dx, $y + $dy);
+
+        #
+        # If we have been there, we run outside of the board, or
+        # the value is higher than what we've already considered,
+        # we're done.
+        #
+        last if     $self  -> been_here ($new_x, $new_y);
+        last unless $board -> is_valid  ($new_x, $new_y);
+        my $value = $board -> to_value  ($new_x, $new_y);
+        last if $best_value && $value > $best_value;
+        #
+        # We have a potential candidate; 
+        #
+        ($x, $y) = ($new_x, $new_y);
+        $best_value = $value;
+    }
+    return unless $best_value;
+    return wantarray ? ($x, $y, $best_value) : [$x, $y, $best_value];
+}
+
+
+#
+# Return the position where the piece should move to, or undef if it's trapped.
+#
+sub target ($self) {
+    my ($best_x, $best_y, $best_value);
+    foreach my $ride (@{$rides {$self}}) {
+        my $candidate = $self -> candidate (@$ride) or next;
+        next if $best_value && $$candidate [-1] > $best_value;
+        ($best_x, $best_y, $best_value) = @$candidate;
+    }
+    return unless $best_value;
+    return wantarray ? ($best_x, $best_y) : [$best_x, $best_y];
+}
 
 #
 # Run: Move the piece until it gets trapped, or until we run out
@@ -151,11 +281,11 @@ sub summary ($self) {
     my $summary    = "";
 
     $summary = sprintf "%s %s on value %d (%d, %d) after %d moves.\n" =>
-                        ucfirst lc $self -> name,
+                        ucfirst $self -> name,
                         $trapped ? "trapped" : "arrived",
                         $$value_list [-1],
                         @{$$move_list [-1]},
-                        scalar @$move_list;
+                        @$move_list - 1;
 
     #
     # Find the binding box
@@ -185,9 +315,10 @@ sub summary ($self) {
         $first_unused = 1;
     }
     else {
-        foreach (my $i = 1; $i < @values; $i ++) {
-            if ($values [$i - 1] + 1 != $values [$i]) {
-                $first_unused = $values [$i - 1] + 1;
+        my $increment = $self -> is_colour_bound ? 2 : 1;
+        foreach (my $i = 1; $i < @values; $i += $increment) {
+            if ($values [$i - 1] + $increment != $values [$i]) {
+                $first_unused = $values [$i - 1] + $increment;
                 last;
             }
         }

@@ -1,4 +1,4 @@
-package Chess::Infinite::Piece::Zebra;
+package Chess::Infinite::Piece::Queen;
 
 use 5.028;
 
@@ -13,11 +13,12 @@ use parent 'Chess::Infinite::Piece';
 
 
 #
-# The Zebra is a (3, 2) leaper.
+# The Queen moves diagonally and orthogonally an unlimited number of fields.
 #
 sub init ($self, @args) {
     $self -> SUPER::init (@args);
-    $self -> set_nm_rides (3, 2);
+    $self -> set_nm_rides ( 1, 1, 0);
+    $self -> set_nm_rides ( 1, 0, 0);
     $self;
 }
 

@@ -1,4 +1,4 @@
-package Chess::Infinite::Piece::Zebra;
+package Chess::Infinite::Piece::Wizard;
 
 use 5.028;
 
@@ -13,11 +13,13 @@ use parent 'Chess::Infinite::Piece';
 
 
 #
-# The Zebra is a (3, 2) leaper.
+# The Wizard combines the movements of the Camel and the Ferz.
+# This piece comes from Omega Chess.
 #
 sub init ($self, @args) {
     $self -> SUPER::init (@args);
-    $self -> set_nm_rides (3, 2);
+    $self -> set_nm_rides (3, 1, 1);   # Camel
+    $self -> set_nm_rides (1, 1, 1);   # Ferz
     $self;
 }
 

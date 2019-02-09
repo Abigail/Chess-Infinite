@@ -1,4 +1,4 @@
-package Chess::Infinite::Piece::Knight;
+package Chess::Infinite::Piece::Bishop;
 
 use 5.028;
 
@@ -11,19 +11,15 @@ use experimental 'lexical_subs';
 
 use parent 'Chess::Infinite::Piece';
 
-#
-# The Knight is a (1, 2) leaper
-#
-sub init ($self, @args) {
-    $self -> SUPER::init  (@args);
-    $self -> set_nm_rides (1, 2);
-    $self;
-}
 
 #
-# Class method
+# The Bishops moves diagonally an unlimited number of fields.
 #
-sub alternative_names ($class) {qw [N]}
+sub init ($self, @args) {
+    $self -> SUPER::init (@args);
+    $self -> set_nm_rides ( 1, 1, 0);
+    $self;
+}
 
 
 1;

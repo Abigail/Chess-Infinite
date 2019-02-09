@@ -1,4 +1,4 @@
-package Chess::Infinite::Piece::Zebra;
+package Chess::Infinite::Piece::Monk;
 
 use 5.028;
 
@@ -13,14 +13,14 @@ use parent 'Chess::Infinite::Piece';
 
 
 #
-# The Zebra is a (3, 2) leaper.
+# The Monk moves as either a Bishop, or a King. Name comes from Chakra.
 #
 sub init ($self, @args) {
     $self -> SUPER::init (@args);
-    $self -> set_nm_rides (3, 2);
+    $self -> set_nm_rides (1, 1, 0);  # Bishop
+    $self -> set_nm_rides (1, 0, 1);  # King
     $self;
 }
-
 
 
 1;

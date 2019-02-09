@@ -1,4 +1,4 @@
-package Chess::Infinite::Piece::Knight;
+package Chess::Infinite::Piece::Tripper;
 
 use 5.028;
 
@@ -11,19 +11,16 @@ use experimental 'lexical_subs';
 
 use parent 'Chess::Infinite::Piece';
 
+
 #
-# The Knight is a (1, 2) leaper
+# The Tripper is a (3, 3) leaper.
 #
 sub init ($self, @args) {
-    $self -> SUPER::init  (@args);
-    $self -> set_nm_rides (1, 2);
+    $self -> SUPER::init (@args);
+    $self -> set_nm_rides (3, 3);
     $self;
 }
 
-#
-# Class method
-#
-sub alternative_names ($class) {qw [N]}
 
 
 1;

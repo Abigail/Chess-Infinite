@@ -9,30 +9,19 @@ no  warnings 'syntax';
 use experimental 'signatures';
 use experimental 'lexical_subs';
 
-use parent 'Chess::Infinite::Piece::Leaper';
+use parent 'Chess::Infinite::Piece';
 
-################################################################################
 #
-# leaps
+# The King is a combined (1, 1) and a (1, 0) leaper.
 #
-# Returns the positions a King can leap to, relative to the current
-# position. This assumes an infinite board, with no fields blocked.
-#
-################################################################################
-
-sub leaps ($self) {
-    my @leaps;
-    foreach my $x (-1 .. 1) {
-        foreach my $y (-1 .. 1) {
-            push @leaps => [$x, $y] if $x || $y;
-        }
-    }
-
-    @leaps;
+sub init ($self, @args) {
+    $self -> SUPER::init (@args);
+    $self -> set_nm_rides (1, 1);
+    $self -> set_nm_rides (1, 0);
+    $self;
 }
 
 
-sub name ($self) {"King"}
 
 1;
 

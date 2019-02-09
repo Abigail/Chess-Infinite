@@ -1,4 +1,4 @@
-package Chess::Infinite::Piece::Zebra;
+package Chess::Infinite::Piece::Rook;
 
 use 5.028;
 
@@ -13,14 +13,18 @@ use parent 'Chess::Infinite::Piece';
 
 
 #
-# The Zebra is a (3, 2) leaper.
+# The Room moves orthogonally an unlimited number of fields.
 #
 sub init ($self, @args) {
     $self -> SUPER::init (@args);
-    $self -> set_nm_rides (3, 2);
+    $self -> set_nm_rides (1, 0, 0);
     $self;
 }
 
+
+sub alternative_names ($self) {
+    "Chariot",          # Xiangqi
+}
 
 
 1;

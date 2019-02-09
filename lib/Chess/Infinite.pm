@@ -1,11 +1,18 @@
 package Chess::Infinite;
 
-use 5.010;
+use 5.028;
 use strict;
 use warnings;
 no  warnings 'syntax';
 
+use experimental 'signatures';
+use experimental 'lexical_subs';
+
 our $VERSION = '2019012901';
+
+use Exporter ();
+our @ISA    = qw [Exporter];
+our @EXPORT = qw [piece];
 
 use Chess::Infinite::Grapher;
 
@@ -13,18 +20,61 @@ use Chess::Infinite::Grapher;
 # Boards
 #
 use Chess::Infinite::Board::Spiral;
+use Chess::Infinite::Board::Triangle;
 
 #
 # Pieces
 #
-use Chess::Infinite::Piece::Knight;
-use Chess::Infinite::Piece::Ferz;
-use Chess::Infinite::Piece::Camel;
-use Chess::Infinite::Piece::Alfil;
-use Chess::Infinite::Piece::King;
-use Chess::Infinite::Piece::DrunkenElephant;
-use Chess::Infinite::Piece::Zebra;
 
+my @CHESS          = qw [King Queen Rook Bishop Knight];
+my @CHESS_COMBINED = qw [Archbishop Chancellor Amazon Samurai Monk];
+my @LEAPERS        = qw [Knight Ferz Alfil Tripper Camel Zebra Wazir
+                         Dabbaba Threeleaper];
+my @OMEGA          = qw [Champion Wizard];
+my @XIANGQI        = qw [Rook];
+my @SHOGI          = qw [King Rook DragonKing Bishop DragonHorse
+                              ShogiKnight
+                              GoldGeneral SilverGeneral Lance];
+my @LARGE_SHOGI    = qw [DrunkenElephant];
+
+my @PIECES  = do {my %seen; grep {!$seen {$_} ++}
+                     @CHESS, @CHESS_COMBINED, @LEAPERS, @OMEGA, @XIANGQI,
+                     @SHOGI, @LARGE_SHOGI};
+
+my %prefix_name;
+my %full_name;
+
+foreach my $piece (@PIECES) {
+    my $class = "Chess::Infinite::Piece::$piece";
+    eval "use $class; 1" or do "Failed to load $class: $!";
+
+    my %done;
+    foreach my $name ($piece, $class -> alternative_names) {
+        my $str = (lc $name) =~ s/[^a-z0-9]+//gr;
+        if ($full_name {$str}) {
+            die "Name class for $piece; $name is already used by class " .
+                $full_name {$str} . "\n";
+        }
+        my $piece_name = $name =~ s/(\p{Ll})(\p{Lu})/$1 $2/gr;
+        $full_name {$str} = [$piece_name, $class];
+        foreach my $n (1 .. length $str) {
+            my $prefix = substr $str, 0, $n;
+            #
+            # First come, first serve.
+            #
+            $prefix_name {$prefix} //= [$piece_name, $class];
+        }
+    }
+}
+
+sub piece ($name, @args) {
+    my $str  = (lc $name) =~ s/[^a-z0-9]+//gr;
+    my $info = $full_name {$str} || $prefix_name {$str} or return;
+
+    my ($piece_name, $class) = @$info;
+
+    $class -> new -> init (@args, name => $piece_name);
+}
 
 1;
 
