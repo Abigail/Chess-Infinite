@@ -86,6 +86,7 @@ my sub draw_sub_path (%args) {
             style => {
                 'fill-opacity' => 0,
                 'stroke'       => $colour,
+                'opacity'      => .5,
             },
         );
 
