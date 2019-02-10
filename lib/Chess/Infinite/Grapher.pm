@@ -48,6 +48,7 @@ my sub draw_sub_path (%args) {
     my $Y             = $args {Y};
     my $is_last       = $args {is_last};
     my $svg           = $args {svg};
+    my $scale         = $args {scale};
 
     state $path_count = 0;
 
@@ -77,14 +78,27 @@ my sub draw_sub_path (%args) {
            -type => 'path',
         );
 
+        my $colour = do {local $" = ","; "rgb(@rgb)"};
+
         $svg -> path (
             %$points,
             id    =>  "path-" . ++ $path_count,
             style => {
                 'fill-opacity' => 0,
-                'stroke'       => do {local $" = ","; "rgb(@rgb)"},
+                'stroke'       => $colour,
             },
         );
+
+        foreach my $index ($from + 1 .. $to) {
+            $svg -> circle (
+                cx     =>  $$X [$index],
+                cy     =>  $$Y [$index],
+                r      =>  $scale / 8,
+                style  => {
+                    fill => $colour,
+                }
+            )
+        }
     }
 }
 
@@ -96,6 +110,7 @@ my sub draw_path (%args) {
     my @X       = @{$args {X}};
     my @Y       = @{$args {Y}};
     my $steps   = $args {steps};
+    my $scale   = $args {scale};
 
     my $colour_steps = @$colours - 1;
     foreach my $colour_step (0 .. ($colour_steps - 1)) {
@@ -124,6 +139,7 @@ my sub draw_path (%args) {
                       Y           => [@Y [$from .. $to]],
                       svg         => $svg,
                       is_last     => $is_last,
+                      scale       => $scale,
         ;
     }
 }
@@ -179,6 +195,7 @@ sub route ($class, %args) {
                X       => \@X,
                Y       => \@Y,
                steps   => $args {steps} || $STEPS,
+               scale   => $scale,
     ;
 
     #
