@@ -21,6 +21,7 @@ use Chess::Infinite::Grapher;
 #
 use Chess::Infinite::Board::Spiral;
 use Chess::Infinite::Board::Triangle;
+use Chess::Infinite::Board::Square;
 
 #
 # Pieces

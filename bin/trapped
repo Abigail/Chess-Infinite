@@ -27,6 +27,7 @@ $board_name = fc $board_name;
 my %board2class = (
     fc spiral      =>  "Spiral",
     fc triangle    =>  "Triangle",
+    fc square      =>  "Square",
 );
 
 
