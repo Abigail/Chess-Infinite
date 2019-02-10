@@ -173,6 +173,14 @@ sub route ($class, %args) {
         height => max (@Y) + $BOTTOM_MARGIN,
     );
 
+    draw_path  colours => $args {colours} ? [split /,/ => $args {colours}]
+                                          : $COLOURS,
+               svg     => $svg,
+               X       => \@X,
+               Y       => \@Y,
+               steps   => $args {steps} || $STEPS,
+    ;
+
     #
     # Draw start/end circles
     #
@@ -186,15 +194,6 @@ sub route ($class, %args) {
             }
         )
     }
-
-    draw_path  colours => $args {colours} ? [split /,/ => $args {colours}]
-                                          : $COLOURS,
-               svg     => $svg,
-               X       => \@X,
-               Y       => \@Y,
-               steps   => $args {steps} || $STEPS,
-    ;
-
 
     my $xml = $svg -> xmlify;
 
