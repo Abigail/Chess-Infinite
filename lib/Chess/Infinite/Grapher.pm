@@ -170,6 +170,7 @@ sub route ($class, %args) {
     #
     my $max = max $max_x, $max_y;
 
+
     #
     # Calculate the scale.
     #
@@ -189,6 +190,33 @@ sub route ($class, %args) {
         width  => max (@X) + $RIGHT_MARGIN,
         height => max (@Y) + $BOTTOM_MARGIN,
     );
+
+    #
+    # Mark which point have been visited.
+    #
+    my %visited;
+    foreach my $move ($piece -> move_list) {
+        $visited {$$move [0] - $min_x} {$$move [1] - $min_y} = 1;
+    }
+    #
+    # And draw a circle there
+    #
+    foreach my $y (0 .. $max_y) {
+        foreach my $x (0 .. $max_x) {
+            next if $visited {$x} {$y};
+            my $CX = $x * $scale + $LEFT_MARGIN;
+            my $CY = $y * $scale + $TOP_MARGIN;
+            $svg -> circle (
+                cx => $CX,
+                cy => $CY,
+                r  => $scale / 8,
+                style => {
+                    fill    => 'rgb(100,100,100)',
+                    opacity => .5,
+                }
+            );
+        }
+    }
 
     draw_path  colours => $args {colours} ? [split /,/ => $args {colours}]
                                           : $COLOURS,
