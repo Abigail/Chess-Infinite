@@ -62,13 +62,10 @@ my sub draw_unvisited (%args) {
             my $CX = $x * $scale + $LEFT_MARGIN;
             my $CY = $y * $scale + $TOP_MARGIN;
             $svg -> circle (
-                cx => $CX,
-                cy => $CY,
-                r  => $scale / 8,
-                style => {
-                    fill    => 'rgb(100,100,100)',
-                    opacity => .5,
-                }
+                cx    => $CX,
+                cy    => $CY,
+                r     => $scale / 8,
+                class => "unvisited",
             );
         }
     }
@@ -126,10 +123,9 @@ my sub draw_sub_path (%args) {
             $svg -> path (
                 %$points,
                 id    =>  "path-" . ++ $path_count,
+                class =>  "path",
                 style => {
-                    'fill-opacity' => 0,
                     'stroke'       => $colour,
-                    'opacity'      => .5,
                 },
             );
         }
@@ -162,9 +158,7 @@ my sub draw_terminals (%args) {
             cx     =>  $$X [$index],
             cy     =>  $$Y [$index],
             r      =>  $scale / 4,
-            style  => {
-                fill => 'black',
-            }
+            class  =>  "terminal",
         )
     }
 }
@@ -212,6 +206,20 @@ my sub draw_path (%args) {
                       show_visited => $show_visited,
         ;
     }
+}
+
+
+my sub set_styles (%args) {
+    my $svg = $args {svg};
+
+    my $style = $svg -> style;
+    $style -> CDATA (<<~ '--');
+        circle.terminal  {fill:          black;}
+        circle.unvisited {fill:          rgb(200,200,200);
+                          opacity:      .5,}
+        path.path        {fill-opacity:  0;
+                          opacity:      .5;}
+    --
 }
 
 sub route ($class, %args) {
@@ -287,6 +295,9 @@ sub route ($class, %args) {
                    Y     => \@Y,
                    svg   => $svg,
                    scale => $scale if $args {show_terminals};
+
+
+    set_styles svg => $svg;
 
     my $xml = $svg -> xmlify;
 
