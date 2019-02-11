@@ -15,11 +15,21 @@ use Getopt::Long;
 
 use Chess::Infinite;
 
-GetOptions  "piece=s"      =>  \(my $piece_name = "knight"),
-            "board=s"      =>  \(my $board_name = "spiral"),
-            "start=i"      =>  \(my $start      =  1),
-            "max_moves=i"  =>  \(my $max_moves  =  10_000),
-            "heading=s"    =>  \ my $heading,
+my %graph_options;
+
+GetOptions  "piece=s"         =>  \(my $piece_name = "knight"),
+            "board=s"         =>  \(my $board_name = "spiral"),
+            "start=i"         =>  \(my $start      =  1),
+            "max_moves=i"     =>  \(my $max_moves  =  10_000),
+            "heading=s"       =>  \ my $heading,
+
+            #
+            # Controls what will be drawn
+            #
+            "show-path!"      =>  \($graph_options {show_path}      = 1),
+            "show-visited!"   =>  \($graph_options {show_visited}   = 1),
+            "show-unvisited!" =>  \($graph_options {show_unvisited} = 1),
+            "show-terminals!" =>  \($graph_options {show_terminals} = 1),
 ;
 
 $board_name = fc $board_name;
@@ -46,7 +56,8 @@ $piece -> run (max_moves => $max_moves,
 say $piece -> summary;
 
 
-Chess::Infinite::Grapher:: -> route (piece => $piece);
+Chess::Infinite::Grapher:: -> route (piece => $piece,
+                                     %graph_options);
 
 
 __END__

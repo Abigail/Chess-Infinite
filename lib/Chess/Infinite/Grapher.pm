@@ -34,6 +34,46 @@ my sub file_name ($piece, $type) {
     $name . "-" . $type . "." . $extension;
 }
 
+
+my sub draw_unvisited (%args) {
+    my $svg   = $args {svg};
+    my $piece = $args {piece};
+    my $scale = $args {scale};
+    my $min_x = $args {min_x};
+    my $min_y = $args {min_y};
+    my $max_x = $args {max_x};
+    my $max_y = $args {max_y};
+
+    my @move_list = $piece -> move_list;
+
+    #
+    # Mark which point have been visited.
+    #
+    my %visited;
+    foreach my $move (@move_list) {
+        $visited {$$move [0] - $min_x} {$$move [1] - $min_y} = 1;
+    }
+    #
+    # And draw a circle there
+    #
+    foreach my $y (0 .. $max_y) {
+        foreach my $x (0 .. $max_x) {
+            next if $visited {$x} {$y};
+            my $CX = $x * $scale + $LEFT_MARGIN;
+            my $CY = $y * $scale + $TOP_MARGIN;
+            $svg -> circle (
+                cx => $CX,
+                cy => $CY,
+                r  => $scale / 8,
+                style => {
+                    fill    => 'rgb(100,100,100)',
+                    opacity => .5,
+                }
+            );
+        }
+    }
+}
+
 #
 # Draws part of a path, doing a blend between two colours; we'll start
 # with the from_colour, and end *one step* away from the end_colour
@@ -49,6 +89,8 @@ my sub draw_sub_path (%args) {
     my $is_last       = $args {is_last};
     my $svg           = $args {svg};
     my $scale         = $args {scale};
+    my $show_path     = $args {show_path};
+    my $show_visited  = $args {show_visited};
 
     state $path_count = 0;
 
@@ -80,38 +122,63 @@ my sub draw_sub_path (%args) {
 
         my $colour = do {local $" = ","; "rgb(@rgb)"};
 
-        $svg -> path (
-            %$points,
-            id    =>  "path-" . ++ $path_count,
-            style => {
-                'fill-opacity' => 0,
-                'stroke'       => $colour,
-                'opacity'      => .5,
-            },
-        );
+        if ($show_path) {
+            $svg -> path (
+                %$points,
+                id    =>  "path-" . ++ $path_count,
+                style => {
+                    'fill-opacity' => 0,
+                    'stroke'       => $colour,
+                    'opacity'      => .5,
+                },
+            );
+        }
 
-        foreach my $index ($from + 1 .. $to) {
-            $svg -> circle (
-                cx     =>  $$X [$index],
-                cy     =>  $$Y [$index],
-                r      =>  $scale / 8,
-                style  => {
-                    fill => $colour,
-                }
-            )
+        if ($show_visited) {
+            foreach my $index ($from + 1 .. $to) {
+                $svg -> circle (
+                    cx     =>  $$X [$index],
+                    cy     =>  $$Y [$index],
+                    r      =>  $scale / 8,
+                    style  => {
+                        fill => $colour,
+                    }
+                )
+            }
         }
     }
 }
 
 
 
+my sub draw_terminals (%args) {
+    my $X     = $args {X};
+    my $Y     = $args {Y};
+    my $scale = $args {scale};
+    my $svg   = $args {svg};
+
+    foreach my $index (0, -1) {
+        $svg -> circle (
+            cx     =>  $$X [$index],
+            cy     =>  $$Y [$index],
+            r      =>  $scale / 4,
+            style  => {
+                fill => 'black',
+            }
+        )
+    }
+}
+
+
 my sub draw_path (%args) {
-    my $colours = $args {colours};
-    my $svg     = $args {svg};
-    my @X       = @{$args {X}};
-    my @Y       = @{$args {Y}};
-    my $steps   = $args {steps};
-    my $scale   = $args {scale};
+    my $colours      = $args {colours};
+    my $svg          = $args {svg};
+    my @X            = @{$args {X}};
+    my @Y            = @{$args {Y}};
+    my $steps        = $args {steps};
+    my $scale        = $args {scale};
+    my $show_path    = $args {show_path};
+    my $show_visited = $args {show_visited};
 
     my $colour_steps = @$colours - 1;
     foreach my $colour_step (0 .. ($colour_steps - 1)) {
@@ -133,14 +200,16 @@ my sub draw_path (%args) {
         my $is_last = $colour_step == $colour_steps - 1;
         $to -- if $is_last;
 
-        draw_sub_path from_colour => $from_colour,
-                      to_colour   => $to_colour,
-                      steps       => $steps,
-                      X           => [@X [$from .. $to]],
-                      Y           => [@Y [$from .. $to]],
-                      svg         => $svg,
-                      is_last     => $is_last,
-                      scale       => $scale,
+        draw_sub_path from_colour  => $from_colour,
+                      to_colour    => $to_colour,
+                      steps        => $steps,
+                      X            => [@X [$from .. $to]],
+                      Y            => [@Y [$from .. $to]],
+                      svg          => $svg,
+                      is_last      => $is_last,
+                      scale        => $scale,
+                      show_path    => $show_path,
+                      show_visited => $show_visited,
         ;
     }
 }
@@ -191,55 +260,33 @@ sub route ($class, %args) {
         height => max (@Y) + $BOTTOM_MARGIN,
     );
 
-    #
-    # Mark which point have been visited.
-    #
-    my %visited;
-    foreach my $move ($piece -> move_list) {
-        $visited {$$move [0] - $min_x} {$$move [1] - $min_y} = 1;
-    }
-    #
-    # And draw a circle there
-    #
-    foreach my $y (0 .. $max_y) {
-        foreach my $x (0 .. $max_x) {
-            next if $visited {$x} {$y};
-            my $CX = $x * $scale + $LEFT_MARGIN;
-            my $CY = $y * $scale + $TOP_MARGIN;
-            $svg -> circle (
-                cx => $CX,
-                cy => $CY,
-                r  => $scale / 8,
-                style => {
-                    fill    => 'rgb(100,100,100)',
-                    opacity => .5,
-                }
-            );
-        }
-    }
+    draw_unvisited svg    =>  $svg,
+                   piece  =>  $piece,
+                   scale  =>  $scale,
+                   min_x  =>  $min_x,
+                   max_x  =>  $max_x,
+                   min_y  =>  $min_y,
+                   max_y  =>  $max_y if $args {show_unvisited};
 
-    draw_path  colours => $args {colours} ? [split /,/ => $args {colours}]
-                                          : $COLOURS,
-               svg     => $svg,
-               X       => \@X,
-               Y       => \@Y,
-               steps   => $args {steps} || $STEPS,
-               scale   => $scale,
-    ;
+
+    draw_path  colours      => $args {colours} ? [split /,/ => $args {colours}]
+                                               : $COLOURS,
+               svg          => $svg,
+               X            => \@X,
+               Y            => \@Y,
+               steps        => $args {steps} || $STEPS,
+               scale        => $scale,
+               show_path    => $args {show_path},
+               show_visited => $args {show_visited},
+           if $args {show_path} || $args {show_visited};
 
     #
     # Draw start/end circles
     #
-    foreach my $index (0, -1) {
-        $svg -> circle (
-            cx     =>  $X [$index],
-            cy     =>  $Y [$index],
-            r      =>  $scale / 4,
-            style  => {
-                fill => 'black',
-            }
-        )
-    }
+    draw_terminals X     => \@X,
+                   Y     => \@Y,
+                   svg   => $svg,
+                   scale => $scale if $args {show_terminals};
 
     my $xml = $svg -> xmlify;
 
