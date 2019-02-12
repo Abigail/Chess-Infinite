@@ -15,12 +15,11 @@ use SVG;
 use List::Util qw [min max];
 use Colour::Name;
 
-my $SIZE          = 750;
-my $LEFT_MARGIN   =  10;
-my $RIGHT_MARGIN  =  10;
-my $TOP_MARGIN    =  10;
-my $BOTTOM_MARGIN =  10;
-my $MIN_SCALE     =  10;
+my $SCALE         =  10;   # Pixels
+my $MARGIN_LEFT   =   1;   # "scales".
+my $MARGIN_RIGHT  =   1;
+my $MARGIN_TOP    =   1;
+my $MARGIN_BOTTOM =   1;
 
 my $COLOURS       = [qw [Red Blue Green Goldenrod]];
 my $STEPS         =  64;
@@ -36,13 +35,15 @@ my sub file_name ($piece, $type) {
 
 
 my sub draw_unvisited (%args) {
-    my $svg   = $args {svg};
-    my $piece = $args {piece};
-    my $scale = $args {scale};
-    my $min_x = $args {min_x};
-    my $min_y = $args {min_y};
-    my $max_x = $args {max_x};
-    my $max_y = $args {max_y};
+    my $svg         = $args {svg};
+    my $piece       = $args {piece};
+    my $scale       = $args {scale};
+    my $min_x       = $args {min_x};
+    my $min_y       = $args {min_y};
+    my $max_x       = $args {max_x};
+    my $max_y       = $args {max_y};
+    my $margin_top  = $args {margin_top};
+    my $margin_left = $args {margin_left};
 
     my @move_list = $piece -> move_list;
 
@@ -51,16 +52,16 @@ my sub draw_unvisited (%args) {
     #
     my %visited;
     foreach my $move (@move_list) {
-        $visited {$$move [0] - $min_x} {$$move [1] - $min_y} = 1;
+        $visited {$$move [0]} {$$move [1]} = 1;
     }
     #
     # And draw a circle there
     #
-    foreach my $y (0 .. $max_y) {
-        foreach my $x (0 .. $max_x) {
+    foreach my $y ($min_y .. $max_y) {
+        foreach my $x ($min_x .. $max_x) {
             next if $visited {$x} {$y};
-            my $CX = $x * $scale + $LEFT_MARGIN;
-            my $CY = $y * $scale + $TOP_MARGIN;
+            my $CX = ($x - $min_x) * $scale + $margin_left;
+            my $CY = ($y - $min_y) * $scale + $margin_top;
             $svg -> circle (
                 cx    => $CX,
                 cy    => $CY,
@@ -223,58 +224,54 @@ my sub set_styles (%args) {
 }
 
 sub route ($class, %args) {
-    my $piece     = $args {piece};
-    my $min_scale = $args {min_scale} // $MIN_SCALE;
+    my $piece         =  $args {piece};
+    my $scale         =  $args {scale}         // $SCALE;
+    my $margin_top    = ($args {margin_top}    // $MARGIN_TOP)    * $scale;
+    my $margin_left   = ($args {margin_left}   // $MARGIN_LEFT)   * $scale;
+    my $margin_bottom = ($args {margin_bottom} // $MARGIN_BOTTOM) * $scale;
+    my $margin_right  = ($args {margin_right}  // $MARGIN_RIGHT)  * $scale;
 
     my @moves = $piece -> move_list;
     my @X = map {$$_ [0]} @moves;
     my @Y = map {$$_ [1]} @moves;
 
     #
-    # Find the minimum x/y values. Move points so the minimum is 0.
+    # Find the minimum x/y values.
     #
-    my $min_x = min @X; @X = map {$_ - $min_x} @X;
-    my $min_y = min @Y; @Y = map {$_ - $min_y} @Y;
-
-    #
-    # Find the maximum x/y values.
-    #
+    my $min_x = min @X;
     my $max_x = max @X;
+    my $min_y = min @Y;
     my $max_y = max @Y;
-
+    
     #
-    # And the max of that.
+    # Move points so the minimum is 0.
     #
-    my $max = max $max_x, $max_y;
-
-
-    #
-    # Calculate the scale.
-    #
-    my $scale = $SIZE / $max;
-       $scale = $min_scale if $min_scale && $scale < $min_scale;
+    @X = map {$_ - $min_x} @X;
+    @Y = map {$_ - $min_y} @Y;
 
     #
     # Scale the points, and shift them.
     #
-    @X = map {$_ * $scale + $LEFT_MARGIN} @X;
-    @Y = map {$_ * $scale + $TOP_MARGIN}  @Y;
+    @X = map {$_ * $scale + $margin_left} @X;
+    @Y = map {$_ * $scale + $margin_top}  @Y;
 
     #
     # Create the SVG image
     #
     my $svg = SVG:: -> new (
-        width  => max (@X) + $RIGHT_MARGIN,
-        height => max (@Y) + $BOTTOM_MARGIN,
+        width  => max (@X) + $margin_right,
+        height => max (@Y) + $margin_bottom,
     );
 
-    draw_unvisited svg    =>  $svg,
-                   piece  =>  $piece,
-                   scale  =>  $scale,
-                   min_x  =>  $min_x,
-                   max_x  =>  $max_x,
-                   min_y  =>  $min_y,
-                   max_y  =>  $max_y if $args {show_unvisited};
+    draw_unvisited svg          =>  $svg,
+                   piece        =>  $piece,
+                   scale        =>  $scale,
+                   min_x        =>  $min_x,
+                   max_x        =>  $max_x,
+                   min_y        =>  $min_y,
+                   max_y        =>  $max_y,
+                   margin_left  =>  $margin_left,
+                   margin_top   =>  $margin_top, if $args {show_unvisited};
 
 
     draw_path  colours      => $args {colours} ? [split /,/ => $args {colours}]

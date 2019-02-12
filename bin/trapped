@@ -30,6 +30,16 @@ GetOptions  "piece=s"         =>  \(my $piece_name = "knight"),
             "show-visited!"   =>  \($graph_options {show_visited}   = 1),
             "show-unvisited!" =>  \($graph_options {show_unvisited} = 1),
             "show-terminals!" =>  \($graph_options {show_terminals} = 1),
+
+            #
+            # Scale/margin options
+            #
+            "margin-left=i"   =>  \($graph_options {margin_left}),
+            "margin-top=i"    =>  \($graph_options {margin_top}),
+            "margin-right=i"  =>  \($graph_options {margin_right}),
+            "margin-bottom=i" =>  \($graph_options {margin_bottom}),
+            "scale=i"         =>  \($graph_options {scale}),
+
 ;
 
 $board_name = fc $board_name;
