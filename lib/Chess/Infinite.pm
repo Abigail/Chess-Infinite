@@ -27,7 +27,7 @@ use Chess::Infinite::Board::Square;
 # Pieces
 #
 
-my @CHESS          = qw [King Queen Rook Bishop Knight];
+my @CHESS          = qw [King Queen Rook Bishop Knight Pawn];
 my @CHESS_COMBINED = qw [Archbishop Chancellor Amazon Samurai Monk];
 my @LEAPERS        = qw [Knight Ferz Alfil Tripper Camel Zebra Wazir
                          Dabbaba Threeleaper];
