@@ -262,6 +262,7 @@ sub run ($self, %args) {
             my ($x, $y) = @$target;
             $self -> set_position ($x, $y);
             $move_count ++;
+            $self -> trigger_after_move;
             next;
         }
         else {
@@ -331,6 +332,13 @@ sub summary ($self) {
 
     $summary;
 }
+
+
+#
+# Triggers called after various actions. (Just after move for now).
+# The methods here won't do anything, but they can be overridden.
+#
+sub trigger_after_move ($self) {$self}
 
 
 1;
