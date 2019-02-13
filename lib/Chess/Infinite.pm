@@ -37,11 +37,12 @@ my @JANGGI         = qw [JanggiElephant];
 my @SHOGI          = qw [King Rook DragonKing Bishop DragonHorse
                               ShogiKnight
                               GoldGeneral SilverGeneral Lance];
+my @NANA_SHOGI     = qw [OrthogonalCube];
 my @LARGE_SHOGI    = qw [DrunkenElephant];
 
 my @PIECES  = do {my %seen; grep {!$seen {$_} ++}
                      @CHESS, @CHESS_COMBINED, @LEAPERS, @OMEGA, @XIANGQI,
-                     @JANGGI, @SHOGI, @LARGE_SHOGI};
+                     @JANGGI, @SHOGI, @NANA_SHOGI, @LARGE_SHOGI};
 
 my %prefix_name;
 my %full_name;
