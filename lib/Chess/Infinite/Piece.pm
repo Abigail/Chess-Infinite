@@ -160,6 +160,13 @@ sub set_ride ($self, $dx, $dy, $max_moves = undef, %args) {
 }
 
 #
+# Clear the rides
+#
+sub clear_rides ($self) {
+    $rides {$self} = [];
+}
+
+#
 # Return the movements
 #
 sub rides ($self) {
