@@ -26,6 +26,7 @@ sub alternative_names ($class) {
     "Marshall",
     "Empress",
     "Knighted Rook",
+    "Wolf",            # From Wolf Chess
 }
 
 1;
