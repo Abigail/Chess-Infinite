@@ -29,6 +29,7 @@ use Chess::Infinite::Board::Square;
 
 my @CHESS          = qw [King Queen Rook Bishop Knight Pawn];
 my @CHESS_COMBINED = qw [Archbishop Chancellor Amazon Samurai Monk];
+my @PAWNS          = qw [Pawn BerolinaPawn Sergeant];
 my @LEAPERS        = qw [Knight Ferz Alfil Tripper Camel Zebra Wazir
                          Dabbaba Threeleaper];
 my @OMEGA          = qw [Champion Wizard];
@@ -41,8 +42,8 @@ my @NANA_SHOGI     = qw [OrthogonalCube DiagonalCube];
 my @LARGE_SHOGI    = qw [DrunkenElephant];
 
 my @PIECES  = do {my %seen; grep {!$seen {$_} ++}
-                     @CHESS, @CHESS_COMBINED, @LEAPERS, @OMEGA, @XIANGQI,
-                     @JANGGI, @SHOGI, @NANA_SHOGI, @LARGE_SHOGI};
+                     @CHESS, @CHESS_COMBINED, @PAWNS, @LEAPERS, @OMEGA,
+                     @XIANGQI, @JANGGI, @SHOGI, @NANA_SHOGI, @LARGE_SHOGI};
 
 my %prefix_name;
 my %full_name;
