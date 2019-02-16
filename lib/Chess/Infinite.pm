@@ -31,7 +31,7 @@ my @CHESS          = qw [King Queen Rook Bishop Knight Pawn];
 my @CHESS_COMBINED = qw [Archbishop Chancellor Amazon Samurai Monk];
 my @PAWNS          = qw [Pawn BerolinaPawn Sergeant];
 my @LEAPERS        = qw [Knight Ferz Alfil Tripper Camel Zebra Wazir
-                         Dabbaba Threeleaper];
+                         Dabbaba Threeleaper KnightRider];
 my @OMEGA          = qw [Champion Wizard];
 my @XIANGQI        = qw [Rook Horse Elephant];
 my @JANGGI         = qw [JanggiElephant];
