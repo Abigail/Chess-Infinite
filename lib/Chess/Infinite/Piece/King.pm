@@ -21,6 +21,12 @@ sub init ($self, @args) {
     $self;
 }
 
+sub alternative_names ($class) {
+    "Guard",     # Chess on an infinite plane
+    "Man",       # Quattrochess
+    "Mann",      # Quattrochess
+    "Commoner",
+}
 
 
 1;
