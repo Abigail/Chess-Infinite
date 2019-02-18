@@ -20,6 +20,10 @@ fieldhash my %trapped;
 fieldhash my %rides;
 fieldhash my %heading;
 fieldhash my %name;
+fieldhash my %min_x;
+fieldhash my %max_x;
+fieldhash my %min_y;
+fieldhash my %max_y;
 
 sub new ($class) {
     bless \do {my $var} => $class;
@@ -52,6 +56,10 @@ sub set_position ($self, $x, $y, $value = undef) {
     push @{$move_list  {$self}} => [$x, $y];
     push @{$value_list {$self}} => $value //
                $self -> board -> to_value ($x, $y);
+    $min_x {$self} = $x if $x < $min_x {$self};
+    $max_x {$self} = $x if $x > $max_x {$self};
+    $min_y {$self} = $y if $y < $min_y {$self};
+    $max_y {$self} = $y if $y > $max_y {$self};
     $self;
 }
 sub position ($self) {
@@ -244,8 +252,9 @@ sub target ($self) {
 # of moves
 #
 sub run ($self, %args) {
-    my $start     = $args {start}     //      1;
-    my $max_moves = $args {max_moves} // 10_000;
+    my $start            = $args {start}            //      1;
+    my $max_moves        = $args {max_moves}        // 10_000;
+    my $max_bounding_box = $args {max_bounding_box} //    200;
 
     #
     # Clear the move list, and where we've been so far
@@ -257,14 +266,24 @@ sub run ($self, %args) {
 
     my $board = $self -> board;
 
+    my ($x, $y) = $board -> to_coordinates ($start);
+
+    #
+    # This is the first position, so set min/max x/y
+    #
+    $min_x {$self} = $max_x {$self} = $x;
+    $min_y {$self} = $max_y {$self} = $y;
+
     #
     # Put the piece at the start position.
     #
-    my ($x, $y) = $board -> to_coordinates ($start);
     $self -> set_position ($x, $y, $start);
 
     my $move_count = 0;
-    while ($move_count < $max_moves) {
+    while ($move_count < $max_moves &&
+             (!$max_bounding_box  ||
+              ($max_bounding_box  >=  $max_x {$self} - $min_x {$self} &&
+               $max_bounding_box  >=  $max_y {$self} - $min_y {$self}))) {
         if (my $target = $self -> target) {
             my ($x, $y) = @$target;
             $self -> set_position ($x, $y);
