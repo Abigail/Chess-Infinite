@@ -257,7 +257,7 @@ sub run ($self, %args) {
     my $max_bounding_box = $args {max_bounding_box} //    200;
 
     #
-    # Clear the move list, and where we've been so far
+    # Clear the move list, and where we've been so far.
     #
     $been_here {$self}  = ();
     $move_list {$self}  = [];
