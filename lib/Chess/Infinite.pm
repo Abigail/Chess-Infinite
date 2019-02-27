@@ -40,8 +40,9 @@ my %Betza = (
     Chancellor        =>  'RN',           # Rook + Knight, Capablanca Chess
     Amazon            =>  'QN',           # Queen + Knight
     Samurai           =>  'KN',           # King + Knight, Chakra Chess
-    Monk              =>  'KB',           # King + Bishop, Chakra Chess
-    DragonKing        =>  'KR',           # King + Rook, Shogi
+    Monk              =>  'WB',           # King + Bishop = Wazir + Bishop,
+                                          #    Chakra Chess
+    DragonKing        =>  'FR',           # King + Rook = Ferz + Rook, Shogi
 
     #
     # Basic leapers
@@ -62,6 +63,11 @@ my %Betza = (
     Wizard            =>  'LF',
 
     #
+    # Shogi
+    #
+    DragonHorse       =>  'BW',
+
+    #
     # Xiangqi
     #
 );
@@ -74,6 +80,7 @@ my %Alternative_Names = (
     CrownedBishop     =>  'Monk',
     CrownedKing       =>  'DragonKing',
     CrownedKnight     =>  'Samurai',
+    DragonHorse       =>  'Monk',         # Shogi
     Empress           =>  'Chancellor',   # Used by problemists
     Fox               =>  'Archbishop',   # Wolf Chess
     Guard             =>  'King',         # Chess on an infinite plane
@@ -102,9 +109,7 @@ my @CHESS_COMBINED = qw [Falcon Hunter];
 my @PAWNS          = qw [Pawn BerolinaPawn Sergeant];
 my @XIANGQI        = qw [Horse Elephant];
 my @JANGGI         = qw [JanggiElephant];
-my @SHOGI          = qw [ DragonHorse
-                              ShogiKnight
-                              GoldGeneral SilverGeneral Lance];
+my @SHOGI          = qw [ShogiKnight GoldGeneral SilverGeneral Lance];
 my @NANA_SHOGI     = qw [OrthogonalCube DiagonalCube];
 my @LARGE_SHOGI    = qw [DrunkenElephant];
 
