@@ -23,20 +23,73 @@ use Chess::Infinite::Board::Spiral;
 use Chess::Infinite::Board::Triangle;
 use Chess::Infinite::Board::Square;
 
+my %Betza = (
+    #
+    # Western Chess
+    #
+    Rook              =>  'R',
+    Knight            =>  'N',
+    Bishop            =>  'B',
+    King              =>  'K',
+    Queen             =>  'Q',
+
+    #
+    # Combined Chess Pieces
+    #
+    Archbishop        =>  'BN',           # Bishop + Knight, Capablanca Chess
+    Chancellor        =>  'RN',           # Rook + Knight, Capablanca Chess
+    Amazon            =>  'QN',           # Queen + Knight
+    Samurai           =>  'KN',           # King + Knight, Chakra Chess
+    Monk              =>  'KB',           # King + Bishop, Chakra Chess
+
+
+    #
+    # Xiangqi
+    #
+    Chariot           =>  'R',
+
+    #
+    # Basic leapers
+    #
+    Wazir             =>  'W',
+);
+
+my %Alternative_Names = (
+    Cardinal          =>  'Archbishop',   # Grand Chess
+    Centaurus         =>  'Archbishop',   # Carrera's Chess
+    Commoner          =>  'King',
+    CrownedBishop     =>  'Monk',
+    CrownedKnight     =>  'Samurai',
+    Empress           =>  'Chancellor',   # Used by problemists
+    Fox               =>  'Archbishop',   # Wolf Chess
+    Guard             =>  'King',         # Chess on an infinite plane
+    Janus             =>  'Archbishop',   # Janus Chess
+    KnightedBishop    =>  'Archbishop',
+    KnightedKing      =>  'Samurai',
+    KnightedRook      =>  'Chancellor',
+    Maharadja         =>  'Amazon',
+    Man               =>  'King',         # Quattrochess
+    Mann              =>  'King',         # Quattrochess
+    Marshall          =>  'Chancellor',   # The Sultan's Game
+    Princess          =>  'Archbishop',   # Used by problemists
+    Vizir             =>  'Archbishop',   # Turkish Grand Chess
+    WarMachine        =>  'Chancellor',   # Turkish Great Chess
+    Wolf              =>  'Chancellor',   # Wolf Chess
+);
+
 #
 # Pieces
 #
 
-my @CHESS          = qw [King Queen Rook Bishop Knight Pawn];
-my @CHESS_COMBINED = qw [Archbishop Chancellor Amazon Samurai Monk
-                         Falcon Hunter];
+my @CHESS          = qw [Pawn];
+my @CHESS_COMBINED = qw [Falcon Hunter];
 my @PAWNS          = qw [Pawn BerolinaPawn Sergeant];
-my @LEAPERS        = qw [Knight Ferz Alfil Tripper Camel Zebra Wazir
+my @LEAPERS        = qw [Ferz Alfil Tripper Camel Zebra
                          Dabbaba Threeleaper KnightRider Hawk];
 my @OMEGA          = qw [Champion Wizard];
-my @XIANGQI        = qw [Rook Horse Elephant];
+my @XIANGQI        = qw [Horse Elephant];
 my @JANGGI         = qw [JanggiElephant];
-my @SHOGI          = qw [King Rook DragonKing Bishop DragonHorse
+my @SHOGI          = qw [DragonKing DragonHorse
                               ShogiKnight
                               GoldGeneral SilverGeneral Lance];
 my @NANA_SHOGI     = qw [OrthogonalCube DiagonalCube];
@@ -61,14 +114,29 @@ foreach my $piece (@PIECES) {
                 $full_name {$str} . "\n";
         }
         my $piece_name = $name =~ s/(\p{Ll})(\p{Lu})/$1 $2/gr;
-        $full_name {$str} = [$piece_name, $class];
+        $full_name {$str} = [$piece_name, $class, 0];
         foreach my $n (1 .. length $str) {
             my $prefix = substr $str, 0, $n;
             #
             # First come, first serve.
             #
-            $prefix_name {$prefix} //= [$piece_name, $class];
+            $prefix_name {$prefix} //= [$piece_name, $class, 0];
         }
+    }
+}
+
+foreach my $alias (keys %Alternative_Names) {
+    my $main_name = $Alternative_Names {$alias};
+    $Betza {$alias} = $Betza {$main_name};
+}
+
+foreach my $name (keys %Betza) {
+    my $notation = $Betza {$name};
+    my $str = (lc $name) =~ s/[^a-z0-9]+//gr;
+    $full_name {$str} = [$name, $notation, 1];
+    foreach my $n (1 .. length $str) {
+        my $prefix = substr $str, 0, $n;
+        $prefix_name {$prefix} //= [$name, $notation, 1];
     }
 }
 
@@ -76,9 +144,19 @@ sub piece ($name, @args) {
     my $str  = (lc $name) =~ s/[^a-z0-9]+//gr;
     my $info = $full_name {$str} || $prefix_name {$str} or return;
 
-    my ($piece_name, $class) = @$info;
+    my ($piece_name, $class_or_notation, $type) = @$info;
 
-    $class -> new -> init (@args, name => $piece_name);
+    my @params = (@args, name => $piece_name);
+    my $class;
+    if ($type == 0) {
+        $class = $class_or_notation;
+    }
+    if ($type == 1) {
+        $class = "Chess::Infinite::Piece";
+        push @params => Betza => $class_or_notation;
+    }
+
+    $class -> new -> init (@params);
 }
 
 1;

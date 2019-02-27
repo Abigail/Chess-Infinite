@@ -38,6 +38,7 @@ sub init ($self, %args) {
     $self -> set_board   ($args {board});
     $self -> set_heading ($args {heading}) if $args {heading};
     $self -> set_name    ($args {name});
+    $self -> set_Betza   ($args {Betza})   if $args {Betza};
 
     $self;
 }
@@ -365,6 +366,57 @@ sub summary ($self) {
 # The methods here won't do anything, but they can be overridden.
 #
 sub trigger_after_move ($self) {$self}
+
+my $ATOMS = {
+    W     =>  [1, 0],    # Wazir
+    F     =>  [1, 1],    # Ferz
+    D     =>  [2, 0],    # Dabbada
+    N     =>  [2, 1],    # Knight
+    A     =>  [2, 2],    # Alfil
+    H     =>  [3, 0],    # Threeleaper
+    L     =>  [3, 1],    # Camel
+    J     =>  [3, 2],    # Zebra
+    G     =>  [3, 3],    # Tripper
+};
+
+my $ALIASES = {
+    R     => 'W0',       # Rook
+    B     => 'F0',       # Bishop
+    K     => 'WF',       # King
+    Q     => 'W0F0',     # Queen
+};
+
+sub set_Betza ($self, $notation) {
+    foreach my $alias (keys %$ALIASES) {
+        my $replacement = $$ALIASES {$alias};
+        $notation =~ s/$alias/$replacement/g;
+    }
+    say "notation = '$notation'";
+    while (length $notation) {
+        if ($notation =~ s/^([A-Z])([0-9]*)//) {
+            my $atom   = $1;
+            my $repeat = $2;
+               $repeat = 1 if !defined $repeat || $repeat eq '';
+               $repeat =  0 if $repeat eq $atom;
+            say "atom = $atom; repeat = $repeat";
+            if ($$ATOMS {$atom}) {
+                my ($x, $y) = @{$$ATOMS {$atom}};
+                say "set_nm_rides ($x, $y, $repeat)";
+                $self -> set_nm_rides ($x, $y, $repeat);
+            }
+            else {
+                die "Failed to find atom $atom";
+            }
+        }
+        else {
+            last;
+        }
+    }
+    die "Failed to parse $notation\n" if length $notation;
+    $self;
+}
+
+
 
 
 1;
