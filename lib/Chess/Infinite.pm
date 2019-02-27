@@ -41,6 +41,7 @@ my %Betza = (
     Amazon            =>  'QN',           # Queen + Knight
     Samurai           =>  'KN',           # King + Knight, Chakra Chess
     Monk              =>  'KB',           # King + Bishop, Chakra Chess
+    DragonKing        =>  'KR',           # King + Rook, Shogi
 
     #
     # Basic leapers
@@ -71,6 +72,7 @@ my %Alternative_Names = (
     Chariot           =>  'Rook',         # Xiangqi, Chaturanga
     Commoner          =>  'King',
     CrownedBishop     =>  'Monk',
+    CrownedKing       =>  'DragonKing',
     CrownedKnight     =>  'Samurai',
     Empress           =>  'Chancellor',   # Used by problemists
     Fox               =>  'Archbishop',   # Wolf Chess
@@ -84,6 +86,7 @@ my %Alternative_Names = (
     Mann              =>  'King',         # Quattrochess
     Marshall          =>  'Chancellor',   # The Sultan's Game
     Princess          =>  'Archbishop',   # Used by problemists
+    PromotedRook      =>  'DragonKing',   # Shogi
     Spy               =>  'King',         # Waterloo Chess
     Vizir             =>  'Archbishop',   # Turkish Grand Chess
     WarMachine        =>  'Chancellor',   # Turkish Great Chess
@@ -99,7 +102,7 @@ my @CHESS_COMBINED = qw [Falcon Hunter];
 my @PAWNS          = qw [Pawn BerolinaPawn Sergeant];
 my @XIANGQI        = qw [Horse Elephant];
 my @JANGGI         = qw [JanggiElephant];
-my @SHOGI          = qw [DragonKing DragonHorse
+my @SHOGI          = qw [ DragonHorse
                               ShogiKnight
                               GoldGeneral SilverGeneral Lance];
 my @NANA_SHOGI     = qw [OrthogonalCube DiagonalCube];
