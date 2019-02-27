@@ -66,6 +66,7 @@ my %Betza = (
     # Shogi
     #
     DragonHorse       =>  'BW',
+    ShogiKnight       =>  'fN',
 
     #
     # Xiangqi
@@ -109,7 +110,7 @@ my @CHESS_COMBINED = qw [Falcon Hunter];
 my @PAWNS          = qw [Pawn BerolinaPawn Sergeant];
 my @XIANGQI        = qw [Horse Elephant];
 my @JANGGI         = qw [JanggiElephant];
-my @SHOGI          = qw [ShogiKnight GoldGeneral SilverGeneral Lance];
+my @SHOGI          = qw [GoldGeneral SilverGeneral Lance];
 my @NANA_SHOGI     = qw [OrthogonalCube DiagonalCube];
 my @LARGE_SHOGI    = qw [DrunkenElephant];
 
