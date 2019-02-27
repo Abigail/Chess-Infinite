@@ -66,8 +66,8 @@ my %Betza = (
     # Shogi
     #
     DragonHorse       =>  'BW',
-    ShogiKnight       =>  'fN',
     GoldGeneral       =>  'WfF',
+    ShogiKnight       =>  'fN',
     SilverGeneral     =>  'FfW',
 
     #
