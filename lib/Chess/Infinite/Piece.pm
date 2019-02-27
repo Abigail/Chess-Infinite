@@ -144,8 +144,8 @@ sub value_list ($self) {
 #
 sub set_nm_rides ($self, $n, $m, $max_moves = 1, %args) {
     my   @leaps = [$n, $m];
-    push @leaps => map {[ $$_ [0], -$$_ [1]]} @leaps;
-    push @leaps => map {[-$$_ [0],  $$_ [1]]} @leaps;
+    push @leaps => map {[ $$_ [0], -$$_ [1]]} @leaps if $m;
+    push @leaps => map {[-$$_ [0],  $$_ [1]]} @leaps if $n;
     push @leaps => map {[ $$_ [1],  $$_ [0]]} @leaps if $n != $m;
 
     #
