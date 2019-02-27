@@ -1,4 +1,4 @@
-package Chess::Infinite::Piece::Threeleaper;
+package Chess::Infinite::Piece::Hunter;
 
 use 5.028;
 
@@ -13,11 +13,13 @@ use parent 'Chess::Infinite::Piece';
 
 
 #
-# The Threeleaper moves orthogonally a double step
+# The Hunter moves forward like a Rook and backwards like a Falcon.
 #
 sub init ($self, @args) {
     $self -> SUPER::init (@args);
-    $self -> set_nm_rides (3,  0);
+    $self -> set_ride ( 0, -1, 0);   # Rook
+    $self -> set_ride ( 1,  1, 0);   # Bishop
+    $self -> set_ride (-1,  1, 0);   # Bishop
     $self;
 }
 

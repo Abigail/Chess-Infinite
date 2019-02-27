@@ -21,25 +21,101 @@ use Chess::Infinite::Grapher;
 #
 use Chess::Infinite::Board::Spiral;
 use Chess::Infinite::Board::Triangle;
+use Chess::Infinite::Board::Square;
+
+my %Betza = (
+    #
+    # Western Chess
+    #
+    Rook              =>  'R',
+    Knight            =>  'N',
+    Bishop            =>  'B',
+    King              =>  'K',
+    Queen             =>  'Q',
+
+    #
+    # Combined Chess Pieces
+    #
+    Archbishop        =>  'BN',           # Bishop + Knight, Capablanca Chess
+    Chancellor        =>  'RN',           # Rook + Knight, Capablanca Chess
+    Amazon            =>  'QN',           # Queen + Knight
+    Samurai           =>  'KN',           # King + Knight, Chakra Chess
+    Monk              =>  'WB',           # King + Bishop = Wazir + Bishop,
+                                          #    Chakra Chess
+    DragonKing        =>  'FR',           # King + Rook = Ferz + Rook, Shogi
+
+    #
+    # Basic leapers
+    #
+    Wazir             =>  'W',
+    Ferz              =>  'F',
+    Dabbada           =>  'D',
+    Alfil             =>  'A',
+    Threeleaper       =>  'H',
+    Camel             =>  'L',
+    Zebra             =>  'J',
+    Tripper           =>  'G',
+
+    #
+    # Omega Chess
+    #
+    Champion          =>  'WAD',
+    Wizard            =>  'LF',
+
+    #
+    # Shogi
+    #
+    DragonHorse       =>  'BW',
+
+    #
+    # Xiangqi
+    #
+);
+
+my %Alternative_Names = (
+    Cardinal          =>  'Archbishop',   # Grand Chess
+    Centaurus         =>  'Archbishop',   # Carrera's Chess
+    Chariot           =>  'Rook',         # Xiangqi, Chaturanga
+    Commoner          =>  'King',
+    CrownedBishop     =>  'Monk',
+    CrownedKing       =>  'DragonKing',
+    CrownedKnight     =>  'Samurai',
+    DragonHorse       =>  'Monk',         # Shogi
+    Empress           =>  'Chancellor',   # Used by problemists
+    Fox               =>  'Archbishop',   # Wolf Chess
+    Guard             =>  'King',         # Chess on an infinite plane
+    Janus             =>  'Archbishop',   # Janus Chess
+    KnightedBishop    =>  'Archbishop',
+    KnightedKing      =>  'Samurai',
+    KnightedRook      =>  'Chancellor',
+    Maharadja         =>  'Amazon',
+    Man               =>  'King',         # Quattrochess
+    Mann              =>  'King',         # Quattrochess
+    Marshall          =>  'Chancellor',   # The Sultan's Game
+    Princess          =>  'Archbishop',   # Used by problemists
+    PromotedRook      =>  'DragonKing',   # Shogi
+    Spy               =>  'King',         # Waterloo Chess
+    Vizir             =>  'Archbishop',   # Turkish Grand Chess
+    WarMachine        =>  'Chancellor',   # Turkish Great Chess
+    Wolf              =>  'Chancellor',   # Wolf Chess
+);
 
 #
 # Pieces
 #
 
-my @CHESS          = qw [King Queen Rook Bishop Knight];
-my @CHESS_COMBINED = qw [Archbishop Chancellor Amazon Samurai Monk];
-my @LEAPERS        = qw [Knight Ferz Alfil Tripper Camel Zebra Wazir
-                         Dabbaba Threeleaper];
-my @OMEGA          = qw [Champion Wizard];
-my @XIANGQI        = qw [Rook];
-my @SHOGI          = qw [King Rook DragonKing Bishop DragonHorse
-                              ShogiKnight
-                              GoldGeneral SilverGeneral Lance];
+my @CHESS          = qw [Pawn];
+my @CHESS_COMBINED = qw [Falcon Hunter];
+my @PAWNS          = qw [Pawn BerolinaPawn Sergeant];
+my @XIANGQI        = qw [Horse Elephant];
+my @JANGGI         = qw [JanggiElephant];
+my @SHOGI          = qw [ShogiKnight GoldGeneral SilverGeneral Lance];
+my @NANA_SHOGI     = qw [OrthogonalCube DiagonalCube];
 my @LARGE_SHOGI    = qw [DrunkenElephant];
 
 my @PIECES  = do {my %seen; grep {!$seen {$_} ++}
-                     @CHESS, @CHESS_COMBINED, @LEAPERS, @OMEGA, @XIANGQI,
-                     @SHOGI, @LARGE_SHOGI};
+                     @CHESS, @CHESS_COMBINED, @PAWNS,
+                     @XIANGQI, @JANGGI, @SHOGI, @NANA_SHOGI, @LARGE_SHOGI};
 
 my %prefix_name;
 my %full_name;
@@ -56,14 +132,29 @@ foreach my $piece (@PIECES) {
                 $full_name {$str} . "\n";
         }
         my $piece_name = $name =~ s/(\p{Ll})(\p{Lu})/$1 $2/gr;
-        $full_name {$str} = [$piece_name, $class];
+        $full_name {$str} = [$piece_name, $class, 0];
         foreach my $n (1 .. length $str) {
             my $prefix = substr $str, 0, $n;
             #
             # First come, first serve.
             #
-            $prefix_name {$prefix} //= [$piece_name, $class];
+            $prefix_name {$prefix} //= [$piece_name, $class, 0];
         }
+    }
+}
+
+foreach my $alias (keys %Alternative_Names) {
+    my $main_name = $Alternative_Names {$alias};
+    $Betza {$alias} = $Betza {$main_name};
+}
+
+foreach my $name (keys %Betza) {
+    my $notation = $Betza {$name};
+    my $str = (lc $name) =~ s/[^a-z0-9]+//gr;
+    $full_name {$str} = [$name, $notation, 1];
+    foreach my $n (1 .. length $str) {
+        my $prefix = substr $str, 0, $n;
+        $prefix_name {$prefix} //= [$name, $notation, 1];
     }
 }
 
@@ -71,9 +162,19 @@ sub piece ($name, @args) {
     my $str  = (lc $name) =~ s/[^a-z0-9]+//gr;
     my $info = $full_name {$str} || $prefix_name {$str} or return;
 
-    my ($piece_name, $class) = @$info;
+    my ($piece_name, $class_or_notation, $type) = @$info;
 
-    $class -> new -> init (@args, name => $piece_name);
+    my @params = (@args, name => $piece_name);
+    my $class;
+    if ($type == 0) {
+        $class = $class_or_notation;
+    }
+    if ($type == 1) {
+        $class = "Chess::Infinite::Piece";
+        push @params => Betza => $class_or_notation;
+    }
+
+    $class -> new -> init (@params);
 }
 
 1;

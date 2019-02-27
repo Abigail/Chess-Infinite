@@ -1,4 +1,4 @@
-package Chess::Infinite::Piece::Zebra;
+package Chess::Infinite::Piece::Falcon;
 
 use 5.028;
 
@@ -13,11 +13,13 @@ use parent 'Chess::Infinite::Piece';
 
 
 #
-# The Zebra is a (3, 2) leaper.
+# The Falcon moves forward like a Bishop and backwards like a Rook.
 #
 sub init ($self, @args) {
     $self -> SUPER::init (@args);
-    $self -> set_nm_rides (3, 2);
+    $self -> set_ride ( 1, -1, 0);   # Bishop
+    $self -> set_ride (-1, -1, 0);   # Bishop
+    $self -> set_ride ( 0,  1, 0);   # Rook
     $self;
 }
 

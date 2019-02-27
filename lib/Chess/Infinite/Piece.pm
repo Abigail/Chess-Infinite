@@ -20,6 +20,10 @@ fieldhash my %trapped;
 fieldhash my %rides;
 fieldhash my %heading;
 fieldhash my %name;
+fieldhash my %min_x;
+fieldhash my %max_x;
+fieldhash my %min_y;
+fieldhash my %max_y;
 
 sub new ($class) {
     bless \do {my $var} => $class;
@@ -34,6 +38,7 @@ sub init ($self, %args) {
     $self -> set_board   ($args {board});
     $self -> set_heading ($args {heading}) if $args {heading};
     $self -> set_name    ($args {name});
+    $self -> set_Betza   ($args {Betza})   if $args {Betza};
 
     $self;
 }
@@ -52,6 +57,10 @@ sub set_position ($self, $x, $y, $value = undef) {
     push @{$move_list  {$self}} => [$x, $y];
     push @{$value_list {$self}} => $value //
                $self -> board -> to_value ($x, $y);
+    $min_x {$self} = $x if $x < $min_x {$self};
+    $max_x {$self} = $x if $x > $max_x {$self};
+    $min_y {$self} = $y if $y < $min_y {$self};
+    $max_y {$self} = $y if $y > $max_y {$self};
     $self;
 }
 sub position ($self) {
@@ -133,7 +142,7 @@ sub value_list ($self) {
 #
 # Sets the rides of an NM rider or leaper
 #
-sub set_nm_rides ($self, $n, $m, $max_moves = 1) {
+sub set_nm_rides ($self, $n, $m, $max_moves = 1, %args) {
     my   @leaps = [$n, $m];
     push @leaps => map {[ $$_ [0], -$$_ [1]]} @leaps;
     push @leaps => map {[-$$_ [0],  $$_ [1]]} @leaps;
@@ -141,7 +150,7 @@ sub set_nm_rides ($self, $n, $m, $max_moves = 1) {
     
     foreach my $leap (@leaps) {
         my ($x, $y) = @$leap;
-        $self -> set_ride ($x, $y, $max_moves);
+        $self -> set_ride ($x, $y, $max_moves, %args);
     }
     $self;
 }
@@ -150,13 +159,20 @@ sub set_nm_rides ($self, $n, $m, $max_moves = 1) {
 #
 # Set movements of the a piece.
 #
-sub set_ride ($self, $dx, $dy, $max_moves = undef) {
+sub set_ride ($self, $dx, $dy, $max_moves = undef, %args) {
     my $heading = $self -> heading;
     if    ($heading eq 'east')  {($dx, $dy) = (-$dy,  $dx);}
     elsif ($heading eq 'south') {($dx, $dy) = (-$dx, -$dy);}
     elsif ($heading eq 'west')  {($dx, $dy) = ( $dy, -$dx);}
-    push @{$rides {$self} //= []} => [$dx, $dy, $max_moves];
+    push @{$rides {$self} //= []} => [$dx, $dy, $max_moves, %args];
     $self;
+}
+
+#
+# Clear the rides
+#
+sub clear_rides ($self) {
+    $rides {$self} = [];
 }
 
 #
@@ -237,11 +253,12 @@ sub target ($self) {
 # of moves
 #
 sub run ($self, %args) {
-    my $start     = $args {start}     //      1;
-    my $max_moves = $args {max_moves} // 10_000;
+    my $start            = $args {start}            //      1;
+    my $max_moves        = $args {max_moves}        // 10_000;
+    my $max_bounding_box = $args {max_bounding_box} //    200;
 
     #
-    # Clear the move list, and where we've been so far
+    # Clear the move list, and where we've been so far.
     #
     $been_here {$self}  = ();
     $move_list {$self}  = [];
@@ -250,18 +267,29 @@ sub run ($self, %args) {
 
     my $board = $self -> board;
 
+    my ($x, $y) = $board -> to_coordinates ($start);
+
+    #
+    # This is the first position, so set min/max x/y
+    #
+    $min_x {$self} = $max_x {$self} = $x;
+    $min_y {$self} = $max_y {$self} = $y;
+
     #
     # Put the piece at the start position.
     #
-    my ($x, $y) = $board -> to_coordinates ($start);
     $self -> set_position ($x, $y, $start);
 
     my $move_count = 0;
-    while ($move_count < $max_moves) {
+    while ($move_count < $max_moves &&
+             (!$max_bounding_box  ||
+              ($max_bounding_box  >=  $max_x {$self} - $min_x {$self} &&
+               $max_bounding_box  >=  $max_y {$self} - $min_y {$self}))) {
         if (my $target = $self -> target) {
             my ($x, $y) = @$target;
             $self -> set_position ($x, $y);
             $move_count ++;
+            $self -> trigger_after_move;
             next;
         }
         else {
@@ -331,6 +359,64 @@ sub summary ($self) {
 
     $summary;
 }
+
+
+#
+# Triggers called after various actions. (Just after move for now).
+# The methods here won't do anything, but they can be overridden.
+#
+sub trigger_after_move ($self) {$self}
+
+my $ATOMS = {
+    W     =>  [1, 0],    # Wazir
+    F     =>  [1, 1],    # Ferz
+    D     =>  [2, 0],    # Dabbada
+    N     =>  [2, 1],    # Knight
+    A     =>  [2, 2],    # Alfil
+    H     =>  [3, 0],    # Threeleaper
+    L     =>  [3, 1],    # Camel
+    J     =>  [3, 2],    # Zebra
+    G     =>  [3, 3],    # Tripper
+};
+
+my $ALIASES = {
+    R     => 'W0',       # Rook
+    B     => 'F0',       # Bishop
+    K     => 'WF',       # King
+    Q     => 'W0F0',     # Queen
+};
+
+sub set_Betza ($self, $notation) {
+    foreach my $alias (keys %$ALIASES) {
+        my $replacement = $$ALIASES {$alias};
+        $notation =~ s/$alias/$replacement/g;
+    }
+    say "notation = '$notation'";
+    while (length $notation) {
+        if ($notation =~ s/^([A-Z])([0-9]*)//) {
+            my $atom   = $1;
+            my $repeat = $2;
+               $repeat = 1 if !defined $repeat || $repeat eq '';
+               $repeat =  0 if $repeat eq $atom;
+            say "atom = $atom; repeat = $repeat";
+            if ($$ATOMS {$atom}) {
+                my ($x, $y) = @{$$ATOMS {$atom}};
+                say "set_nm_rides ($x, $y, $repeat)";
+                $self -> set_nm_rides ($x, $y, $repeat);
+            }
+            else {
+                die "Failed to find atom $atom";
+            }
+        }
+        else {
+            last;
+        }
+    }
+    die "Failed to parse $notation\n" if length $notation;
+    $self;
+}
+
+
 
 
 1;
