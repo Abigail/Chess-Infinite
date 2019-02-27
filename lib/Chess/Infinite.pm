@@ -57,12 +57,12 @@ my %Betza = (
     #
     # Xiangqi
     #
-    Chariot           =>  'R',
 );
 
 my %Alternative_Names = (
     Cardinal          =>  'Archbishop',   # Grand Chess
     Centaurus         =>  'Archbishop',   # Carrera's Chess
+    Chariot           =>  'Rook',         # Xiangqi, Chaturanga
     Commoner          =>  'King',
     CrownedBishop     =>  'Monk',
     CrownedKnight     =>  'Samurai',
