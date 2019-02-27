@@ -67,6 +67,7 @@ my %Betza = (
     #
     DragonHorse       =>  'BW',
     ShogiKnight       =>  'fN',
+    GoldGeneral       =>  'WfF',
 
     #
     # Xiangqi
@@ -74,31 +75,38 @@ my %Betza = (
 );
 
 my %Alternative_Names = (
-    Cardinal          =>  'Archbishop',   # Grand Chess
-    Centaurus         =>  'Archbishop',   # Carrera's Chess
-    Chariot           =>  'Rook',         # Xiangqi, Chaturanga
-    Commoner          =>  'King',
-    CrownedBishop     =>  'Monk',
-    CrownedKing       =>  'DragonKing',
-    CrownedKnight     =>  'Samurai',
-    DragonHorse       =>  'Monk',         # Shogi
-    Empress           =>  'Chancellor',   # Used by problemists
-    Fox               =>  'Archbishop',   # Wolf Chess
-    Guard             =>  'King',         # Chess on an infinite plane
-    Janus             =>  'Archbishop',   # Janus Chess
-    KnightedBishop    =>  'Archbishop',
-    KnightedKing      =>  'Samurai',
-    KnightedRook      =>  'Chancellor',
-    Maharadja         =>  'Amazon',
-    Man               =>  'King',         # Quattrochess
-    Mann              =>  'King',         # Quattrochess
-    Marshall          =>  'Chancellor',   # The Sultan's Game
-    Princess          =>  'Archbishop',   # Used by problemists
-    PromotedRook      =>  'DragonKing',   # Shogi
-    Spy               =>  'King',         # Waterloo Chess
-    Vizir             =>  'Archbishop',   # Turkish Grand Chess
-    WarMachine        =>  'Chancellor',   # Turkish Great Chess
-    Wolf              =>  'Chancellor',   # Wolf Chess
+    Cardinal              =>  'Archbishop',    # Grand Chess
+    Centaurus             =>  'Archbishop',    # Carrera's Chess
+    Chariot               =>  'Rook',          # Xiangqi, Chaturanga
+    Commoner              =>  'King',
+    CrownedBishop         =>  'Monk',
+    CrownedKing           =>  'DragonKing',
+    CrownedKnight         =>  'Samurai',
+    DragonHorse           =>  'Monk',          # Shogi
+    Empress               =>  'Chancellor',    # Used by problemists
+    Fox                   =>  'Archbishop',    # Wolf Chess
+    GoldenGeneral         =>  'GoldenGeneral', # Shogi
+    Guard                 =>  'King',          # Chess on an infinite plane
+    Janus                 =>  'Archbishop',    # Janus Chess
+    KnightedBishop        =>  'Archbishop',
+    KnightedKing          =>  'Samurai',
+    KnightedRook          =>  'Chancellor',
+    Maharadja             =>  'Amazon',
+    Man                   =>  'King',          # Quattrochess
+    Mann                  =>  'King',          # Quattrochess
+    Marshall              =>  'Chancellor',    # The Sultan's Game
+    Princess              =>  'Archbishop',    # Used by problemists
+    PromotedKnight        =>  'GoldGeneral',   # Shogi
+    PromotedLance         =>  'GoldGeneral',   # Shogi
+    PromotedPawn          =>  'GoldGeneral',   # Shogi
+    PromotedRook          =>  'DragonKing',    # Shogi
+    PromotedShogiKnight   =>  'GoldGeneral',   # Shogi
+    PromotedShogiPawn     =>  'GoldGeneral',   # Shogi
+    PromotedSilverGeneral =>  'GoldGeneral',   # Shogi
+    Spy                   =>  'King',          # Waterloo Chess
+    Vizir                 =>  'Archbishop',    # Turkish Grand Chess
+    WarMachine            =>  'Chancellor',    # Turkish Great Chess
+    Wolf                  =>  'Chancellor',    # Wolf Chess
 );
 
 #
@@ -110,7 +118,7 @@ my @CHESS_COMBINED = qw [Falcon Hunter];
 my @PAWNS          = qw [Pawn BerolinaPawn Sergeant];
 my @XIANGQI        = qw [Horse Elephant];
 my @JANGGI         = qw [JanggiElephant];
-my @SHOGI          = qw [GoldGeneral SilverGeneral Lance];
+my @SHOGI          = qw [SilverGeneral Lance];
 my @NANA_SHOGI     = qw [OrthogonalCube DiagonalCube];
 my @LARGE_SHOGI    = qw [DrunkenElephant];
 
