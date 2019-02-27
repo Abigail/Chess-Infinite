@@ -42,12 +42,6 @@ my %Betza = (
     Samurai           =>  'KN',           # King + Knight, Chakra Chess
     Monk              =>  'KB',           # King + Bishop, Chakra Chess
 
-
-    #
-    # Xiangqi
-    #
-    Chariot           =>  'R',
-
     #
     # Basic leapers
     #
@@ -59,6 +53,11 @@ my %Betza = (
     Camel             =>  'L',
     Zebra             =>  'J',
     Tripper           =>  'G',
+
+    #
+    # Xiangqi
+    #
+    Chariot           =>  'R',
 );
 
 my %Alternative_Names = (
@@ -79,6 +78,7 @@ my %Alternative_Names = (
     Mann              =>  'King',         # Quattrochess
     Marshall          =>  'Chancellor',   # The Sultan's Game
     Princess          =>  'Archbishop',   # Used by problemists
+    Spy               =>  'King',         # Waterloo Chess
     Vizir             =>  'Archbishop',   # Turkish Grand Chess
     WarMachine        =>  'Chancellor',   # Turkish Great Chess
     Wolf              =>  'Chancellor',   # Wolf Chess
