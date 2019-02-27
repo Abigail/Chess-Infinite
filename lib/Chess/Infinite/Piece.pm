@@ -147,9 +147,18 @@ sub set_nm_rides ($self, $n, $m, $max_moves = 1, %args) {
     push @leaps => map {[ $$_ [0], -$$_ [1]]} @leaps;
     push @leaps => map {[-$$_ [0],  $$_ [1]]} @leaps;
     push @leaps => map {[ $$_ [1],  $$_ [0]]} @leaps if $n != $m;
+
+    #
+    # Filter based on modifiers
+    #
+    my $modifiers = delete $args {modifiers};
+    if ($modifiers =~ /f/) {
+        @leaps = grep {$$_ [1] < 0 && abs ($$_ [0]) <= abs ($$_ [1])} @leaps;
+    }
     
     foreach my $leap (@leaps) {
         my ($x, $y) = @$leap;
+        say "set_ride ($x, $y, $max_moves)";
         $self -> set_ride ($x, $y, $max_moves, %args);
     }
     $self;
@@ -386,6 +395,8 @@ my $ALIASES = {
     Q     => 'W0F0',     # Queen
 };
 
+
+
 sub set_Betza ($self, $notation) {
     foreach my $alias (keys %$ALIASES) {
         my $replacement = $$ALIASES {$alias};
@@ -393,16 +404,20 @@ sub set_Betza ($self, $notation) {
     }
     say "notation = '$notation'";
     while (length $notation) {
-        if ($notation =~ s/^([A-Z])([0-9]*)//) {
-            my $atom   = $1;
-            my $repeat = $2;
-               $repeat = 1 if !defined $repeat || $repeat eq '';
-               $repeat =  0 if $repeat eq $atom;
+        if ($notation =~ s/^(?<modifiers>[a-z]*)
+                            (?<atom>[A-Z])
+                            (?<repeat>[0-9]*)//x) {
+            my $modifiers = $+ {modifiers};
+            my $atom      = $+ {atom};
+            my $repeat    = $+ {repeat};
+               $repeat    = 1 if !defined $repeat || $repeat eq '';
+               $repeat    = 0 if $repeat eq $atom;
             say "atom = $atom; repeat = $repeat";
             if ($$ATOMS {$atom}) {
                 my ($x, $y) = @{$$ATOMS {$atom}};
                 say "set_nm_rides ($x, $y, $repeat)";
-                $self -> set_nm_rides ($x, $y, $repeat);
+                $self -> set_nm_rides ($x, $y, $repeat,
+                                        modifiers => $modifiers);
             }
             else {
                 die "Failed to find atom $atom";
