@@ -57,6 +57,11 @@ my %Betza = (
     Tripper           =>  'G',
 
     #
+    # Riders
+    #
+    KnightRider       =>  'N0',
+
+    #
     # Omega Chess
     #
     Champion          =>  'WAD',
