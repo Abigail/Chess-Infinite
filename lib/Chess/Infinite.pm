@@ -67,6 +67,7 @@ my %Betza = (
     #
     DragonHorse       =>  'BW',
     GoldGeneral       =>  'WfF',
+    Lance             =>  'fR',
     ShogiKnight       =>  'fN',
     SilverGeneral     =>  'FfW',
 
@@ -119,13 +120,12 @@ my @CHESS_COMBINED = qw [Falcon Hunter];
 my @PAWNS          = qw [Pawn BerolinaPawn Sergeant];
 my @XIANGQI        = qw [Horse Elephant];
 my @JANGGI         = qw [JanggiElephant];
-my @SHOGI          = qw [Lance];
 my @NANA_SHOGI     = qw [OrthogonalCube DiagonalCube];
 my @LARGE_SHOGI    = qw [DrunkenElephant];
 
 my @PIECES  = do {my %seen; grep {!$seen {$_} ++}
                      @CHESS, @CHESS_COMBINED, @PAWNS,
-                     @XIANGQI, @JANGGI, @SHOGI, @NANA_SHOGI, @LARGE_SHOGI};
+                     @XIANGQI, @JANGGI, @NANA_SHOGI, @LARGE_SHOGI};
 
 my %prefix_name;
 my %full_name;
