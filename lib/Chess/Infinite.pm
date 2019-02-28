@@ -80,6 +80,9 @@ my %Betza = (
     #
     Horse             =>  'nN',
     Elephant          =>  'nA',
+
+    # Janggi
+    JanggiElephant    =>  'nJ',
 );
 
 my %Alternative_Names = (
@@ -125,13 +128,12 @@ my %Alternative_Names = (
 my @CHESS          = qw [Pawn];
 my @CHESS_COMBINED = qw [Falcon Hunter];
 my @PAWNS          = qw [Pawn BerolinaPawn Sergeant];
-my @JANGGI         = qw [JanggiElephant];
 my @NANA_SHOGI     = qw [OrthogonalCube DiagonalCube];
 my @LARGE_SHOGI    = qw [DrunkElephant];
 
 my @PIECES  = do {my %seen; grep {!$seen {$_} ++}
                      @CHESS, @CHESS_COMBINED, @PAWNS,
-                     @JANGGI, @NANA_SHOGI, @LARGE_SHOGI};
+                     @NANA_SHOGI, @LARGE_SHOGI};
 
 my %prefix_name;
 my %full_name;
