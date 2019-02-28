@@ -16,7 +16,7 @@ our @ISA    = qw [Exporter];
 our @EXPORT = qw [test_moves];
 
 
-sub test_moves ($piece, $board) {
+sub test_moves ($piece, $board, $name = "Available moves") {
     #
     # First, parse the field, note where a piece could land
     #
@@ -63,8 +63,7 @@ sub test_moves ($piece, $board) {
                        $$a [1] <=> $$b [1]  ||
                        $$a [2] <=> $$b [2]} @got_moves; 
 
-
-    is_deeply \@got_moves, \@exp_moves, "Expected moves";
+    is_deeply \@got_moves, \@exp_moves, $name;
 }
 
 
