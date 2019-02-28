@@ -163,6 +163,14 @@ sub set_nm_rides ($self, $n, $m, $max_moves = 1, %args) {
             push @new => grep {$$_ [1] > 0 &&
                                abs ($$_ [0]) <= abs ($$_ [1])} @leaps;
         }
+        if ($modifiers =~ /[ls]/) {
+            push @new => grep {$$_ [0] < 0 &&
+                               abs ($$_ [1]) <= abs ($$_ [0])} @leaps;
+        }
+        if ($modifiers =~ /[rs]/) {
+            push @new => grep {$$_ [0] > 0 &&
+                               abs ($$_ [1]) <= abs ($$_ [0])} @leaps;
+        }
 
         @leaps = @new;
     }
