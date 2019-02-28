@@ -444,11 +444,19 @@ my $ALIASES = {
 
 
 sub set_Betza ($self, $notation) {
+    say "notation in:  '$notation'";
     foreach my $alias (keys %$ALIASES) {
         my $replacement = $$ALIASES {$alias};
-        $notation =~ s/$alias/$replacement/g;
+        next unless $notation =~ /(?<modifiers>[a-z]*) $alias
+                                  (?<repeat>[0-9]*)/xp;
+        my ($pre, $modifiers, $repeat, $post) = 
+            (${^PREMATCH}, $+ {modifiers}, $+ {repeat}, ${^POSTMATCH});
+        my $repl = join "" => map {$modifiers . $_ . $repeat}
+                                    $replacement =~ /[A-Z][0-9]*/g;
+        $notation = $pre . $repl . $post;
+        redo;
     }
-    say "notation = '$notation'";
+    say "notation out: '$notation'";
     while (length $notation) {
         if ($notation =~ s/^(?<modifiers>[a-z]*)
                             (?<atom>[A-Z])
