@@ -155,10 +155,15 @@ sub set_nm_rides ($self, $n, $m, $max_moves = 1, %args) {
     my $modifiers = delete $args {modifiers} // "";
     if ($modifiers =~ /[fblrsv]/) {
         my @new;
-        if ($modifiers =~ s/f//) {
+        if ($modifiers =~ /f/) {
             push @new => grep {$$_ [1] < 0 &&
                                abs ($$_ [0]) <= abs ($$_ [1])} @leaps;
         }
+        if ($modifiers =~ /b/) {
+            push @new => grep {$$_ [1] > 0 &&
+                               abs ($$_ [0]) <= abs ($$_ [1])} @leaps;
+        }
+
         @leaps = @new;
     }
 
