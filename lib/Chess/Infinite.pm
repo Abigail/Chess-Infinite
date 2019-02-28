@@ -75,6 +75,11 @@ my %Betza = (
                                           # Both from Falcon-Hunter Chess
 
     #
+    # Chess on an infinite plane
+    #
+    Hawk              =>  'AGDH',
+
+    #
     # Shogi
     #
     GoldGeneral       =>  'WfF',
