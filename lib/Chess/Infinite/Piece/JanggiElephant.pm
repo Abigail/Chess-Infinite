@@ -27,7 +27,7 @@ sub init ($self, @args) {
 # We check whether we go over a field that is blocked; if so,
 # we return; else we continue with the regular check.
 #
-sub candidate ($self, $dx, $dy, $movement) {
+sub candidate ($self, $dx, $dy, $movement, %args) {
     my @to_check;
 
     if (abs ($dx) == 3) {

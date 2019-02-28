@@ -27,7 +27,7 @@ sub init ($self, @args) {
 # We check whether we go over a field that is blocked; if so,
 # we return; else we continue with the regular check.
 #
-sub candidate ($self, $dx, $dy, $movement) {
+sub candidate ($self, $dx, $dy, $movement, %args) {
     my ($free_x, $free_y) = (0, 0);
     if (abs ($dx) == 2) {
         $free_x = $dx / 2;

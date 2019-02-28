@@ -10,6 +10,7 @@ use experimental 'signatures';
 use experimental 'lexical_subs';
 
 use Hash::Util::FieldHash qw [fieldhash];
+use List::Util            qw [max];
 
 fieldhash my %position;
 fieldhash my %board;
@@ -151,7 +152,7 @@ sub set_nm_rides ($self, $n, $m, $max_moves = 1, %args) {
     #
     # Filter based on modifiers
     #
-    my $modifiers = delete $args {modifiers};
+    my $modifiers = delete $args {modifiers} // "";
     if ($modifiers =~ /[fblrsv]/) {
         my @new;
         if ($modifiers =~ s/f//) {
@@ -160,6 +161,8 @@ sub set_nm_rides ($self, $n, $m, $max_moves = 1, %args) {
         }
         @leaps = @new;
     }
+
+    $args {free_path} = 1 if $modifiers =~ /n/;
     
     foreach my $leap (@leaps) {
         my ($x, $y) = @$leap;
@@ -216,12 +219,13 @@ sub is_colour_bound ($self) {
 #    - we exceed max moves (if given)
 #    - the value of the position starts increasing
 #
-sub candidate ($self, $dx, $dy, $max_moves) {
+sub candidate ($self, $dx, $dy, $max_moves, %args) {
     return if     $self -> trapped;
     my $board   = $self -> board;
-    my ($x, $y) = $self -> position;
+    my ($old_x, $old_y) = $self -> position;
     my $best_value;
     my $move_count = 0;
+    my ($x, $y) = ($old_x, $old_y);
     while (!$max_moves || $move_count ++ < $max_moves) {
         #
         # Next position to consider.
@@ -244,6 +248,25 @@ sub candidate ($self, $dx, $dy, $max_moves) {
         $best_value = $value;
     }
     return unless $best_value;
+
+    #
+    # Do we require a free path? That is, can we be blocked?
+    # For now, we assume this only makes sense if max_moves == 1
+    #
+    # We're checking the "straightest" line, that is, if we leap
+    # in direction (m, n) with k = max (abs (m), abs (n)), we check
+    # if the position (floor (i * m / k), floor (i * n / k)) is not
+    # occupied, for 0 < i < k.
+    #
+    if ($args {free_path}) {
+        my $max_away = max abs ($dx), abs ($dy);
+        foreach my $step (1 .. ($max_away - 1)) {
+            my $check_x = $old_x + int ($step * $dx / $max_away);
+            my $check_y = $old_y + int ($step * $dy / $max_away);
+            return if $self -> been_here ($check_x, $check_y);
+        }
+    }
+
     return wantarray ? ($x, $y, $best_value) : [$x, $y, $best_value];
 }
 
