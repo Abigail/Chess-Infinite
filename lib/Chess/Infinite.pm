@@ -125,7 +125,7 @@ my @PAWNS          = qw [Pawn BerolinaPawn Sergeant];
 my @XIANGQI        = qw [Horse Elephant];
 my @JANGGI         = qw [JanggiElephant];
 my @NANA_SHOGI     = qw [OrthogonalCube DiagonalCube];
-my @LARGE_SHOGI    = qw [DrunkenElephant];
+my @LARGE_SHOGI    = qw [DrunkElephant];
 
 my @PIECES  = do {my %seen; grep {!$seen {$_} ++}
                      @CHESS, @CHESS_COMBINED, @PAWNS,

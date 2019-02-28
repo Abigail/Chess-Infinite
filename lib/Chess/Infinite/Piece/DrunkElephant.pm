@@ -1,4 +1,4 @@
-package Chess::Infinite::Piece::DrunkenElephant;
+package Chess::Infinite::Piece::DrunkElephant;
 
 use 5.028;
 
@@ -12,7 +12,7 @@ use experimental 'lexical_subs';
 use parent 'Chess::Infinite::Piece';
 
 #
-# The Drunken Elephant steps 1 field in any direction, except backwards.
+# The Drunk Elephant steps 1 field in any direction, except backwards.
 #
 sub init ($self, @args) {
     $self -> SUPER::init (@args);
