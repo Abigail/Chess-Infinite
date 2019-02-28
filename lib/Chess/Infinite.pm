@@ -80,6 +80,13 @@ my %Betza = (
     Hawk              =>  'AGDH',
 
     #
+    # Chess with different armies
+    #
+    Beda              =>  'BD',
+    Waffle            =>  'WA',
+    FAD               =>  'FAD',
+
+    #
     # Shogi
     #
     GoldGeneral       =>  'WfF',
