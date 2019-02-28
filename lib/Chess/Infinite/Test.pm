@@ -29,11 +29,14 @@ sub test_moves ($piece, $board, $name = "Available moves") {
         foreach my $field (split ' ' => $line) {
             $x ++;
             next if $field =~ /^\.+$/;
+
             if ($field eq '*') {
                 @offset = ($x, $y);
             }
-            elsif ($field =~ /^[0-9]+$/) {
-                push @exp_moves => [$x, $y, $field];
+            elsif ($field =~ /^(?<not_blocked>n?)(?<moves>[0-9]+)$/) {
+                push @exp_moves => [$x, $y,
+                                    $+ {moves},
+                                    $+ {not_blocked} ? (free_path => 1) : ()];
             }
             else {
                 die "Failed to parse '$field'\n";
@@ -46,7 +49,7 @@ sub test_moves ($piece, $board, $name = "Available moves") {
     # Normalize so offset is 0
     #
     @exp_moves = map {[$$_ [0] - $offset [0],
-                       $$_ [1] - $offset [1], $$_ [2]]} @exp_moves;
+                       $$_ [1] - $offset [1], @$_ [2 .. $#$_]]} @exp_moves;
 
     #
     # Get moves from piece
