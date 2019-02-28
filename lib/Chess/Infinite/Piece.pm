@@ -416,8 +416,10 @@ my $ATOMS = {
     N     =>  [2, 1],    # Knight
     A     =>  [2, 2],    # Alfil
     H     =>  [3, 0],    # Threeleaper
-    L     =>  [3, 1],    # Camel
-    J     =>  [3, 2],    # Zebra
+    C     =>  [3, 1],    # Camel
+    J     =>  [3, 1],    # Camel (old notation)
+    Z     =>  [3, 2],    # Zebra
+    L     =>  [3, 2],    # Zebra (old notation)
     G     =>  [3, 3],    # Tripper
 };
 

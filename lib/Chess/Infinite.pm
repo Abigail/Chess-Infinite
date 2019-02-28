@@ -52,8 +52,8 @@ my %Betza = (
     Dabbada           =>  'D',
     Alfil             =>  'A',
     Threeleaper       =>  'H',
-    Camel             =>  'L',
-    Zebra             =>  'J',
+    Camel             =>  'C',
+    Zebra             =>  'Z',
     Tripper           =>  'G',
 
     #
@@ -65,7 +65,7 @@ my %Betza = (
     # Omega Chess
     #
     Champion          =>  'WAD',
-    Wizard            =>  'LF',
+    Wizard            =>  'CF',
 
     #
     # Half/half Combined Chess Pieces
@@ -89,7 +89,7 @@ my %Betza = (
     Elephant          =>  'nA',
 
     # Janggi
-    JanggiElephant    =>  'nJ',
+    JanggiElephant    =>  'nZ',
 );
 
 my %Alternative_Names = (
