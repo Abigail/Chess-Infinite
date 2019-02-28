@@ -89,6 +89,9 @@ my %Betza = (
     Fibnif            =>  'fbNF',
     ChargingKnight    =>  'fhNsbWbF',
     Colonel           =>  'fhNfsRFbW',
+    ShortRook         =>  'W4',
+    WoodyRook         =>  'WD',
+    HalfDuck          =>  'HFD',
 
     #
     # Shogi
