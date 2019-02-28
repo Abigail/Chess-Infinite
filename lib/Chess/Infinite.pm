@@ -78,6 +78,7 @@ my %Betza = (
     #
     # Xiangqi
     #
+    Horse             =>  'nN',
 );
 
 my %Alternative_Names = (
@@ -122,7 +123,7 @@ my %Alternative_Names = (
 my @CHESS          = qw [Pawn];
 my @CHESS_COMBINED = qw [Falcon Hunter];
 my @PAWNS          = qw [Pawn BerolinaPawn Sergeant];
-my @XIANGQI        = qw [Horse Elephant];
+my @XIANGQI        = qw [Elephant];
 my @JANGGI         = qw [JanggiElephant];
 my @NANA_SHOGI     = qw [OrthogonalCube DiagonalCube];
 my @LARGE_SHOGI    = qw [DrunkElephant];
