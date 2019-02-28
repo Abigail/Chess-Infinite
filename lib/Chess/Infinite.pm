@@ -68,6 +68,13 @@ my %Betza = (
     Wizard            =>  'LF',
 
     #
+    # Half/half Combined Chess Pieces
+    #
+    Falcon            =>  'fBbR',         # Forward Bishop/Backwards Rook
+    Hunter            =>  'fRbB',         # Forward Room/Backwards Bishop
+                                          # Both from Falcon-Hunter Chess
+
+    #
     # Shogi
     #
     GoldGeneral       =>  'WfF',
@@ -126,13 +133,12 @@ my %Alternative_Names = (
 #
 
 my @CHESS          = qw [Pawn];
-my @CHESS_COMBINED = qw [Falcon Hunter];
 my @PAWNS          = qw [Pawn BerolinaPawn Sergeant];
 my @NANA_SHOGI     = qw [OrthogonalCube DiagonalCube];
 my @LARGE_SHOGI    = qw [DrunkElephant];
 
 my @PIECES  = do {my %seen; grep {!$seen {$_} ++}
-                     @CHESS, @CHESS_COMBINED, @PAWNS,
+                     @CHESS, @PAWNS,
                      @NANA_SHOGI, @LARGE_SHOGI};
 
 my %prefix_name;
