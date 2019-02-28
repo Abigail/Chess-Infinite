@@ -173,23 +173,25 @@ foreach my $name (keys %Betza) {
     }
 }
 
-sub piece ($name, @args) {
+sub piece ($name, %args) {
     my $str  = (lc $name) =~ s/[^a-z0-9]+//gr;
     my $info = $full_name {$str} || $prefix_name {$str} or return;
 
     my ($piece_name, $class_or_notation, $type) = @$info;
 
-    my @params = (@args, name => $piece_name);
+    $args {board} //= Chess::Infinite::Board::Spiral:: -> new -> init;
+    $args {name}    = $piece_name;
+
     my $class;
     if ($type == 0) {
         $class = $class_or_notation;
     }
     if ($type == 1) {
         $class = "Chess::Infinite::Piece";
-        push @params => Betza => $class_or_notation;
+        $args {Betza} = $class_or_notation;
     }
 
-    $class -> new -> init (@params);
+    $class -> new -> init (%args);
 }
 
 1;
