@@ -93,6 +93,10 @@ my %Betza = (
     WoodyRook         =>  'WD',
     HalfDuck          =>  'HFD',
     Gnohmon           =>  'fbNfbWnH',
+    Wader             =>  'WD0',
+    Darter            =>  'fNWbA0',
+    Faalcon           =>  'FA0',
+    FlyingKingfisher  =>  'WFA0D0',
 
     #
     # Shogi
