@@ -97,6 +97,7 @@ my %Betza = (
     Darter            =>  'fNWbA0',
     Faalcon           =>  'FA0',
     FlyingKingfisher  =>  'WFA0D0',
+    Napolean          =>  'fbNW',
 
     #
     # Shogi
