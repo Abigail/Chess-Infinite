@@ -60,6 +60,8 @@ my %Betza = (
     # Riders
     #
     KnightRider       =>  'N0',
+    CamelRider        =>  'C0',
+    ZebraRider        =>  'Z0',
 
     #
     # Omega Chess
