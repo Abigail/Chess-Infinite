@@ -296,6 +296,8 @@ sub route ($class, %args) {
 
     set_styles svg => $svg;
 
+    return $svg if $args {svg};
+
     my $xml = $svg -> xmlify;
 
     my $file = file_name $piece, "path";
