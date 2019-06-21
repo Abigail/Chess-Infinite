@@ -258,9 +258,22 @@ sub route ($class, %args) {
     #
     # Create the SVG image
     #
+
+    my $width  = max (@X) + $margin_right;
+    my $height = max (@Y) + $margin_bottom;
+
     my $svg = SVG:: -> new (
-        width  => max (@X) + $margin_right,
-        height => max (@Y) + $margin_bottom,
+        viewBox  =>  "0 0 $width $height",
+        style    =>  <<~ "--",
+            display:    block;
+            border:     1px solid #ccc;
+            position:   absolute;
+            top:        5%;
+            left:       5%;
+            width:      90%;
+            height:     90%;
+            background: #fff;
+        --
     );
 
     draw_unvisited svg          =>  $svg,
