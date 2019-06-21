@@ -239,7 +239,7 @@ sub route ($class, %args) {
     my $width  = $max_x - $min_x + $margin_left + $margin_right;
     my $height = $max_y - $min_y + $margin_top  + $margin_bottom;
     my $from_x = $min_x - $margin_left;
-    my $from_y = $min_x - $margin_top;
+    my $from_y = $min_y - $margin_top;
 
     #
     # Create the SVG image
