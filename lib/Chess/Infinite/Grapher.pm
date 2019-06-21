@@ -15,7 +15,7 @@ use SVG;
 use List::Util qw [min max];
 use Colour::Name;
 
-my $MARGIN_LEFT   =   1;   # "scales".
+my $MARGIN_LEFT   =   1;
 my $MARGIN_RIGHT  =   1;
 my $MARGIN_TOP    =   1;
 my $MARGIN_BOTTOM =   1;
@@ -34,14 +34,15 @@ my sub file_name ($piece, $type) {
 
 
 my sub draw_unvisited (%args) {
-    my $svg         = $args {svg};
-    my $piece       = $args {piece};
-    my $min_x       = $args {min_x};
-    my $min_y       = $args {min_y};
-    my $max_x       = $args {max_x};
-    my $max_y       = $args {max_y};
-    my $margin_top  = $args {margin_top};
-    my $margin_left = $args {margin_left};
+    my $svg    = $args {svg};
+    my $piece  = $args {piece};
+    my @X      = @{$args {X}};
+    my @Y      = @{$args {Y}};
+
+    my $min_x  = min (@X);
+    my $min_y  = min (@Y);
+    my $max_x  = max (@X);
+    my $max_y  = max (@Y);
 
     my @move_list = $piece -> move_list;
 
@@ -58,11 +59,9 @@ my sub draw_unvisited (%args) {
     foreach my $y ($min_y .. $max_y) {
         foreach my $x ($min_x .. $max_x) {
             next if $visited {$x} {$y};
-            my $CX = ($x - $min_x) + $margin_left;
-            my $CY = ($y - $min_y) + $margin_top;
             $svg -> circle (
-                cx    => $CX,
-                cy    => $CY,
+                cx    => $x,
+                cy    => $y,
                 r     => .125,
                 class => "unvisited",
             );
@@ -232,32 +231,21 @@ sub route ($class, %args) {
     #
     # Find the minimum x/y values.
     #
-    my $min_x = min @X;
-    my $max_x = max @X;
-    my $min_y = min @Y;
-    my $max_y = max @Y;
+    my $min_x  = min (@X);
+    my $min_y  = min (@Y);
+    my $max_x  = max (@X);
+    my $max_y  = max (@Y);
     
-    #
-    # Move points so the minimum is 0.
-    #
-    @X = map {$_ - $min_x} @X;
-    @Y = map {$_ - $min_y} @Y;
-
-    #
-    # Scale the points, and shift them.
-    #
-    @X = map {$_ + $margin_left} @X;
-    @Y = map {$_ + $margin_top}  @Y;
+    my $width  = $max_x - $min_x + $margin_left + $margin_right;
+    my $height = $max_y - $min_y + $margin_top  + $margin_bottom;
+    my $from_x = $min_x - $margin_left;
+    my $from_y = $min_x - $margin_top;
 
     #
     # Create the SVG image
     #
-
-    my $width  = max (@X) + $margin_right;
-    my $height = max (@Y) + $margin_bottom;
-
     my $svg = SVG:: -> new (
-        viewBox  =>  "0 0 $width $height",
+        viewBox  =>  "$from_x $from_y $width $height",
         style    =>  <<~ "--",
             display:    block;
             border:     1px solid #ccc;
@@ -272,12 +260,8 @@ sub route ($class, %args) {
 
     draw_unvisited svg          =>  $svg,
                    piece        =>  $piece,
-                   min_x        =>  $min_x,
-                   max_x        =>  $max_x,
-                   min_y        =>  $min_y,
-                   max_y        =>  $max_y,
-                   margin_left  =>  $margin_left,
-                   margin_top   =>  $margin_top, if $args {show_unvisited};
+                   X            =>  \@X,
+                   Y            =>  \@Y, if $args {show_unvisited};
 
 
     draw_path  colours      => $args {colours} ? [split /,/ => $args {colours}]
