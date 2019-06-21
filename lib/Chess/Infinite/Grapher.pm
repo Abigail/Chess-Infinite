@@ -15,7 +15,6 @@ use SVG;
 use List::Util qw [min max];
 use Colour::Name;
 
-my $SCALE         =  10;   # Pixels
 my $MARGIN_LEFT   =   1;   # "scales".
 my $MARGIN_RIGHT  =   1;
 my $MARGIN_TOP    =   1;
@@ -37,7 +36,6 @@ my sub file_name ($piece, $type) {
 my sub draw_unvisited (%args) {
     my $svg         = $args {svg};
     my $piece       = $args {piece};
-    my $scale       = $args {scale};
     my $min_x       = $args {min_x};
     my $min_y       = $args {min_y};
     my $max_x       = $args {max_x};
@@ -60,12 +58,12 @@ my sub draw_unvisited (%args) {
     foreach my $y ($min_y .. $max_y) {
         foreach my $x ($min_x .. $max_x) {
             next if $visited {$x} {$y};
-            my $CX = ($x - $min_x) * $scale + $margin_left;
-            my $CY = ($y - $min_y) * $scale + $margin_top;
+            my $CX = ($x - $min_x) + $margin_left;
+            my $CY = ($y - $min_y) + $margin_top;
             $svg -> circle (
                 cx    => $CX,
                 cy    => $CY,
-                r     => $scale / 8,
+                r     => .125,
                 class => "unvisited",
             );
         }
@@ -86,7 +84,6 @@ my sub draw_sub_path (%args) {
     my $Y             = $args {Y};
     my $is_last       = $args {is_last};
     my $svg           = $args {svg};
-    my $scale         = $args {scale};
     my $show_path     = $args {show_path};
     my $show_visited  = $args {show_visited};
 
@@ -136,7 +133,7 @@ my sub draw_sub_path (%args) {
                 $svg -> circle (
                     cx     =>  $$X [$index],
                     cy     =>  $$Y [$index],
-                    r      =>  $scale / 8,
+                    r      =>  .125,
                     style  => {
                         fill => $colour,
                     }
@@ -151,14 +148,13 @@ my sub draw_sub_path (%args) {
 my sub draw_terminals (%args) {
     my $X     = $args {X};
     my $Y     = $args {Y};
-    my $scale = $args {scale};
     my $svg   = $args {svg};
 
     foreach my $index (0, -1) {
         $svg -> circle (
             cx     =>  $$X [$index],
             cy     =>  $$Y [$index],
-            r      =>  $scale / 4,
+            r      =>  .25,
             class  =>  "terminal",
         )
     }
@@ -171,7 +167,6 @@ my sub draw_path (%args) {
     my @X            = @{$args {X}};
     my @Y            = @{$args {Y}};
     my $steps        = $args {steps};
-    my $scale        = $args {scale};
     my $show_path    = $args {show_path};
     my $show_visited = $args {show_visited};
 
@@ -202,7 +197,6 @@ my sub draw_path (%args) {
                       Y            => [@Y [$from .. $to]],
                       svg          => $svg,
                       is_last      => $is_last,
-                      scale        => $scale,
                       show_path    => $show_path,
                       show_visited => $show_visited,
         ;
@@ -219,17 +213,17 @@ my sub set_styles (%args) {
         circle.unvisited {fill:          rgb(200,200,200);
                           opacity:      .5,}
         path.path        {fill-opacity:  0;
-                          opacity:      .5;}
+                          opacity:      .5;
+                          stroke-width: .1;}
     --
 }
 
 sub route ($class, %args) {
     my $piece         =  $args {piece};
-    my $scale         =  $args {scale}         // $SCALE;
-    my $margin_top    = ($args {margin_top}    // $MARGIN_TOP)    * $scale;
-    my $margin_left   = ($args {margin_left}   // $MARGIN_LEFT)   * $scale;
-    my $margin_bottom = ($args {margin_bottom} // $MARGIN_BOTTOM) * $scale;
-    my $margin_right  = ($args {margin_right}  // $MARGIN_RIGHT)  * $scale;
+    my $margin_top    = ($args {margin_top}    // $MARGIN_TOP);
+    my $margin_left   = ($args {margin_left}   // $MARGIN_LEFT);
+    my $margin_bottom = ($args {margin_bottom} // $MARGIN_BOTTOM);
+    my $margin_right  = ($args {margin_right}  // $MARGIN_RIGHT);
 
     my @moves = $piece -> move_list;
     my @X = map {$$_ [0]} @moves;
@@ -252,8 +246,8 @@ sub route ($class, %args) {
     #
     # Scale the points, and shift them.
     #
-    @X = map {$_ * $scale + $margin_left} @X;
-    @Y = map {$_ * $scale + $margin_top}  @Y;
+    @X = map {$_ + $margin_left} @X;
+    @Y = map {$_ + $margin_top}  @Y;
 
     #
     # Create the SVG image
@@ -278,7 +272,6 @@ sub route ($class, %args) {
 
     draw_unvisited svg          =>  $svg,
                    piece        =>  $piece,
-                   scale        =>  $scale,
                    min_x        =>  $min_x,
                    max_x        =>  $max_x,
                    min_y        =>  $min_y,
@@ -293,7 +286,6 @@ sub route ($class, %args) {
                X            => \@X,
                Y            => \@Y,
                steps        => $args {steps} || $STEPS,
-               scale        => $scale,
                show_path    => $args {show_path},
                show_visited => $args {show_visited},
            if $args {show_path} || $args {show_visited};
@@ -303,8 +295,7 @@ sub route ($class, %args) {
     #
     draw_terminals X     => \@X,
                    Y     => \@Y,
-                   svg   => $svg,
-                   scale => $scale if $args {show_terminals};
+                   svg   => $svg, if $args {show_terminals};
 
 
     set_styles svg => $svg;
