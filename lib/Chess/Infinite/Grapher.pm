@@ -296,6 +296,81 @@ sub route ($class, %args) {
     close $fh or die "Failed to close $file: $!";
 }
 
+my $field_width  = 128;   # Pixels
+my $field_height = $field_width;
+my $board_width  =   7;   # 7x7 movement board for now.
+my $board_height = $board_width;
+
+my sub draw_field ($svg, $x, $y, %args) {
+    my $class  = ($x + $y) % 2 ? "even" : "odd";
+
+    $svg -> rect (
+        x      =>  ($x - .5) * $field_width,
+        y      =>  ($y - .5) * $field_height,
+        width  =>   $field_width,
+        height =>   $field_height,
+        class  =>   $class,
+    );
+
+}
+
+
+
+sub movement ($class, %args) {
+    my $piece  = $args {piece};
+
+    my $from_x = - ($board_width  / 2) * $field_width;
+    my $from_y = - ($board_height / 2) * $field_height;
+    my $width  =    $board_width       * $field_width;
+    my $height =    $board_height      * $field_height;
+
+    my $min_x  = - int ($board_width  / 2);
+    my $min_y  = - int ($board_height / 2);
+    my $max_x  = $min_x + $board_width  - 1;
+    my $max_y  = $min_y + $board_height - 1;
+
+    #
+    # Create the SVG image
+    #
+    my $svg = SVG:: -> new (
+        viewBox  =>  "$from_x $from_y $width $height",
+        style    =>  <<~ "--",
+            display:    block;
+            border:     1px solid #ccc;
+            position:   absolute;
+            top:        5%;
+            left:       5%;
+            width:      90%;
+            height:     90%;
+            background: #fff;
+        --
+    );
+
+    #
+    # Create the fields
+    #
+    foreach my $x ($min_x .. $max_x) {
+        foreach my $y ($min_y .. $max_y) {
+            draw_field $svg, $x, $y;
+        }
+    }
+
+    $svg -> style -> CDATA (<<~ "--");
+        rect.odd      {fill: brown;}
+        rect.even     {fill: rgb(232,235,239);}
+    --
+
+    
+
+    my $xml = $svg -> xmlify;
+
+    my $file = file_name $piece, "movement";
+    open my $fh, ">", $file or die "Failed to open $file: $!";
+    print $fh $xml;
+    close $fh or die "Failed to close $file: $!";
+}
+
+
 1;
 
 __END__
