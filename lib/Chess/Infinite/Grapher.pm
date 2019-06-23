@@ -150,11 +150,13 @@ my sub draw_terminals (%args) {
     my $svg   = $args {svg};
 
     foreach my $index (0, -1) {
+        my $class = $index ? "terminal terminal-finish"
+                           : "terminal terminal-start";
         $svg -> circle (
             cx     =>  $$X [$index],
             cy     =>  $$Y [$index],
             r      =>  .25,
-            class  =>  "terminal",
+            class  =>  $class,
         )
     }
 }
