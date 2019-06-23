@@ -71,5 +71,8 @@ say $piece -> summary;
 Chess::Infinite::Grapher:: -> route (piece => $piece,
                                      %graph_options);
 
+Chess::Infinite::Grapher:: -> movement (piece => $piece,
+                                        %graph_options);
+
 
 __END__
