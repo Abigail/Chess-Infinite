@@ -300,6 +300,7 @@ my $field_width  = 128;   # Pixels
 my $field_height = $field_width;
 my $board_width  =   7;   # 7x7 movement board for now.
 my $board_height = $board_width;
+my $font_size    =  100;
 
 my sub draw_field ($svg, $x, $y, %args) {
     my $class  = ($x + $y) % 2 ? "even" : "odd";
@@ -355,17 +356,29 @@ sub movement ($class, %args) {
         }
     }
 
+    #
+    # Place the piece on the center of the board
+    #
+    $svg -> text (
+        x => 0,
+        y => $font_size / 4,
+    ) -> cdata ($piece -> character // "?");
+
     $svg -> style -> CDATA (<<~ "--");
         rect.odd      {fill: brown;}
         rect.even     {fill: rgb(232,235,239);}
+        text          {text-anchor: middle;
+                       font-size: ${font_size}px;}
     --
 
+    my $rides = $piece -> rides;
     
 
     my $xml = $svg -> xmlify;
 
     my $file = file_name $piece, "movement";
     open my $fh, ">", $file or die "Failed to open $file: $!";
+    binmode $fh, ":utf8";
     print $fh $xml;
     close $fh or die "Failed to close $file: $!";
 }

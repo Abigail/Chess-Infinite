@@ -13,6 +13,7 @@ use Hash::Util::FieldHash qw [fieldhash];
 use List::Util            qw [max];
 
 fieldhash my %position;
+fieldhash my %character;
 fieldhash my %board;
 fieldhash my %been_here;
 fieldhash my %move_list;
@@ -36,10 +37,11 @@ sub init ($self, %args) {
     #
     # Where are we moving on?
     #
-    $self -> set_board   ($args {board});
-    $self -> set_heading ($args {heading}) if $args {heading};
-    $self -> set_name    ($args {name});
-    $self -> set_Betza   ($args {Betza})   if $args {Betza};
+    $self -> set_board     ($args {board});
+    $self -> set_heading   ($args {heading})   if $args {heading};
+    $self -> set_name      ($args {name});
+    $self -> set_Betza     ($args {Betza})     if $args {Betza};
+    $self -> set_character ($args {character}) if $args {character};
 
     $self;
 }
@@ -78,6 +80,18 @@ sub set_name ($self, $name) {
 
 sub name ($self) {
     $name {$self}
+}
+
+#
+# Set/return character
+#
+sub set_character ($self, $character) {
+    $character {$self} = $character;
+    $self;
+}
+
+sub character ($self) {
+    $character {$self};
 }
 
 #
