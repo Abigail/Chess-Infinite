@@ -264,8 +264,6 @@ sub piece ($name, %args) {
         }
     }
 
-    say "\$class = $class";
-
     $class -> new -> init (%args);
 }
 
