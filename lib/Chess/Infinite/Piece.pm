@@ -385,7 +385,7 @@ sub summary ($self) {
                         @$move_list - 1;
 
     #
-    # Find the binding box
+    # Find the bonding box
     #
     my $big = 0xFFFF_FFFF;
     my ($min_x, $min_y, $max_x, $max_y) = ($big, $big, -$big, -$big);
