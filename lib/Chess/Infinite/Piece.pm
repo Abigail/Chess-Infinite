@@ -185,7 +185,6 @@ sub set_nm_rides ($self, $n, $m, $max_moves = 1, %args) {
     
     foreach my $leap (@leaps) {
         my ($x, $y) = @$leap;
-        say "set_ride ($x, $y, $max_moves)";
         $self -> set_ride ($x, $y, $max_moves, %args);
     }
     $self;
@@ -447,7 +446,6 @@ my $ALIASES = {
 
 
 sub set_Betza ($self, $notation) {
-    say "notation in:  '$notation'";
     foreach my $alias (keys %$ALIASES) {
         my $replacement = $$ALIASES {$alias};
         next unless $notation =~ /(?<modifiers>[a-z]*) $alias
@@ -459,7 +457,6 @@ sub set_Betza ($self, $notation) {
         $notation = $pre . $repl . $post;
         redo;
     }
-    say "notation out: '$notation'";
     while (length $notation) {
         if ($notation =~ s/^(?<modifiers>[a-z]*)
                             (?<atom>[A-Z])
@@ -469,10 +466,8 @@ sub set_Betza ($self, $notation) {
             my $repeat    = $+ {repeat};
                $repeat    = 1 if !defined $repeat || $repeat eq '';
                $repeat    = 0 if $repeat eq $atom;
-            say "atom = $atom; repeat = $repeat";
             if ($$ATOMS {$atom}) {
                 my ($x, $y) = @{$$ATOMS {$atom}};
-                say "set_nm_rides ($x, $y, $repeat)";
                 $self -> set_nm_rides ($x, $y, $repeat,
                                         modifiers => $modifiers);
             }
