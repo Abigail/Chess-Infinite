@@ -23,15 +23,28 @@ use Chess::Infinite::Board::Spiral;
 use Chess::Infinite::Board::Triangle;
 use Chess::Infinite::Board::Square;
 
+my %Pieces = (
+    Rook              =>  {Betza      =>    'R',
+                           character  =>   "\N{BLACK CHESS ROOK}"},
+    Knight            =>  {Betza      =>    'N',
+                           character  =>   "\N{BLACK CHESS KNIGHT}"},
+    Bishop            =>  {Betza      =>    'B',
+                           character  =>   "\N{BLACK CHESS BISHOP}"},
+    King              =>  {Betza      =>    'K',
+                           character  =>   "\N{BLACK CHESS KING}"},
+    Queen             =>  {Betza      =>    'Q',
+                           character  =>   "\N{BLACK CHESS QUEEN}"},
+);
+
 my %Betza = (
     #
     # Western Chess
     #
-    Rook              =>  'R',
-    Knight            =>  'N',
-    Bishop            =>  'B',
-    King              =>  'K',
-    Queen             =>  'Q',
+  # Rook              =>  'R',
+  # Knight            =>  'N',
+  # Bishop            =>  'B',
+  # King              =>  'K',
+  # Queen             =>  'Q',
 
     #
     # Combined Chess Pieces
@@ -138,7 +151,7 @@ my %Alternative_Names = (
     Forfnifurlrurking     =>  'Colonel',        # Chess with different armies
     Fox                   =>  'Archbishop',     # Wolf Chess
     Furlrurlbakking       =>  'ChargingRook',   # Chess with different armies
-    GoldenGeneral         =>  'GoldenGeneral',  # Shogi
+    GoldenGeneral         =>  'GoldGeneral',    # Shogi
     Guard                 =>  'King',           # Chess on an infinite plane
     Janus                 =>  'Archbishop',     # Janus Chess
     KnightedBishop        =>  'Archbishop',
@@ -215,23 +228,43 @@ foreach my $name (keys %Betza) {
     }
 }
 
+
+foreach my $name (keys %Pieces) {
+    my $info = $Pieces {$name};
+    $$info {name} = $name;
+    my $str  = (lc $name) =~ s/[^a-z0-9]+//gr;
+    $full_name {$str} = $info;
+    foreach my $n (1 .. length $str) {
+        my $prefix = substr $str, 0, $n;
+        $prefix_name {$prefix} //= $info;
+    }
+}
+
+
 sub piece ($name, %args) {
     my $str  = (lc $name) =~ s/[^a-z0-9]+//gr;
     my $info = $full_name {$str} || $prefix_name {$str} or return;
 
-    my ($piece_name, $class_or_notation, $type) = @$info;
-
     $args {board} //= Chess::Infinite::Board::Spiral:: -> new -> init;
-    $args {name}    = $piece_name;
 
-    my $class;
-    if ($type == 0) {
-        $class = $class_or_notation;
+    my $class = "Chess::Infinite::Piece";
+    if (ref $info eq 'HASH') {
+        $args {$_} = $$info {$_} for keys %$info;
     }
-    if ($type == 1) {
-        $class = "Chess::Infinite::Piece";
-        $args {Betza} = $class_or_notation;
+    else {
+        my ($piece_name, $class_or_notation, $type) = @$info;
+
+        $args {name}    = $piece_name;
+
+        if ($type == 0) {
+            $class = $class_or_notation;
+        }
+        if ($type == 1) {
+            $args {Betza} = $class_or_notation;
+        }
     }
+
+    say "\$class = $class";
 
     $class -> new -> init (%args);
 }

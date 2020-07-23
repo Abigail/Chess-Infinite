@@ -15,8 +15,7 @@ use SVG;
 use List::Util qw [min max];
 use Colour::Name;
 
-my $SCALE         =  10;   # Pixels
-my $MARGIN_LEFT   =   1;   # "scales".
+my $MARGIN_LEFT   =   1;
 my $MARGIN_RIGHT  =   1;
 my $MARGIN_TOP    =   1;
 my $MARGIN_BOTTOM =   1;
@@ -35,15 +34,15 @@ my sub file_name ($piece, $type) {
 
 
 my sub draw_unvisited (%args) {
-    my $svg         = $args {svg};
-    my $piece       = $args {piece};
-    my $scale       = $args {scale};
-    my $min_x       = $args {min_x};
-    my $min_y       = $args {min_y};
-    my $max_x       = $args {max_x};
-    my $max_y       = $args {max_y};
-    my $margin_top  = $args {margin_top};
-    my $margin_left = $args {margin_left};
+    my $svg    = $args {svg};
+    my $piece  = $args {piece};
+    my @X      = @{$args {X}};
+    my @Y      = @{$args {Y}};
+
+    my $min_x  = min (@X);
+    my $min_y  = min (@Y);
+    my $max_x  = max (@X);
+    my $max_y  = max (@Y);
 
     my @move_list = $piece -> move_list;
 
@@ -60,12 +59,10 @@ my sub draw_unvisited (%args) {
     foreach my $y ($min_y .. $max_y) {
         foreach my $x ($min_x .. $max_x) {
             next if $visited {$x} {$y};
-            my $CX = ($x - $min_x) * $scale + $margin_left;
-            my $CY = ($y - $min_y) * $scale + $margin_top;
             $svg -> circle (
-                cx    => $CX,
-                cy    => $CY,
-                r     => $scale / 8,
+                cx    => $x,
+                cy    => $y,
+                r     => .125,
                 class => "unvisited",
             );
         }
@@ -86,7 +83,6 @@ my sub draw_sub_path (%args) {
     my $Y             = $args {Y};
     my $is_last       = $args {is_last};
     my $svg           = $args {svg};
-    my $scale         = $args {scale};
     my $show_path     = $args {show_path};
     my $show_visited  = $args {show_visited};
 
@@ -136,7 +132,7 @@ my sub draw_sub_path (%args) {
                 $svg -> circle (
                     cx     =>  $$X [$index],
                     cy     =>  $$Y [$index],
-                    r      =>  $scale / 8,
+                    r      =>  .125,
                     style  => {
                         fill => $colour,
                     }
@@ -151,15 +147,16 @@ my sub draw_sub_path (%args) {
 my sub draw_terminals (%args) {
     my $X     = $args {X};
     my $Y     = $args {Y};
-    my $scale = $args {scale};
     my $svg   = $args {svg};
 
     foreach my $index (0, -1) {
+        my $class = $index ? "terminal terminal-finish"
+                           : "terminal terminal-start";
         $svg -> circle (
             cx     =>  $$X [$index],
             cy     =>  $$Y [$index],
-            r      =>  $scale / 4,
-            class  =>  "terminal",
+            r      =>  .25,
+            class  =>  $class,
         )
     }
 }
@@ -171,7 +168,6 @@ my sub draw_path (%args) {
     my @X            = @{$args {X}};
     my @Y            = @{$args {Y}};
     my $steps        = $args {steps};
-    my $scale        = $args {scale};
     my $show_path    = $args {show_path};
     my $show_visited = $args {show_visited};
 
@@ -202,7 +198,6 @@ my sub draw_path (%args) {
                       Y            => [@Y [$from .. $to]],
                       svg          => $svg,
                       is_last      => $is_last,
-                      scale        => $scale,
                       show_path    => $show_path,
                       show_visited => $show_visited,
         ;
@@ -219,17 +214,17 @@ my sub set_styles (%args) {
         circle.unvisited {fill:          rgb(200,200,200);
                           opacity:      .5,}
         path.path        {fill-opacity:  0;
-                          opacity:      .5;}
+                          opacity:      .5;
+                          stroke-width: .1;}
     --
 }
 
 sub route ($class, %args) {
     my $piece         =  $args {piece};
-    my $scale         =  $args {scale}         // $SCALE;
-    my $margin_top    = ($args {margin_top}    // $MARGIN_TOP)    * $scale;
-    my $margin_left   = ($args {margin_left}   // $MARGIN_LEFT)   * $scale;
-    my $margin_bottom = ($args {margin_bottom} // $MARGIN_BOTTOM) * $scale;
-    my $margin_right  = ($args {margin_right}  // $MARGIN_RIGHT)  * $scale;
+    my $margin_top    = ($args {margin_top}    // $MARGIN_TOP);
+    my $margin_left   = ($args {margin_left}   // $MARGIN_LEFT);
+    my $margin_bottom = ($args {margin_bottom} // $MARGIN_BOTTOM);
+    my $margin_right  = ($args {margin_right}  // $MARGIN_RIGHT);
 
     my @moves = $piece -> move_list;
     my @X = map {$$_ [0]} @moves;
@@ -238,40 +233,37 @@ sub route ($class, %args) {
     #
     # Find the minimum x/y values.
     #
-    my $min_x = min @X;
-    my $max_x = max @X;
-    my $min_y = min @Y;
-    my $max_y = max @Y;
+    my $min_x  = min (@X);
+    my $min_y  = min (@Y);
+    my $max_x  = max (@X);
+    my $max_y  = max (@Y);
     
-    #
-    # Move points so the minimum is 0.
-    #
-    @X = map {$_ - $min_x} @X;
-    @Y = map {$_ - $min_y} @Y;
-
-    #
-    # Scale the points, and shift them.
-    #
-    @X = map {$_ * $scale + $margin_left} @X;
-    @Y = map {$_ * $scale + $margin_top}  @Y;
+    my $width  = $max_x - $min_x + $margin_left + $margin_right;
+    my $height = $max_y - $min_y + $margin_top  + $margin_bottom;
+    my $from_x = $min_x - $margin_left;
+    my $from_y = $min_y - $margin_top;
 
     #
     # Create the SVG image
     #
     my $svg = SVG:: -> new (
-        width  => max (@X) + $margin_right,
-        height => max (@Y) + $margin_bottom,
+        viewBox  =>  "$from_x $from_y $width $height",
+        style    =>  <<~ "--",
+            display:    block;
+            border:     1px solid #ccc;
+            position:   absolute;
+            top:        5%;
+            left:       5%;
+            width:      90%;
+            height:     90%;
+            background: #fff;
+        --
     );
 
     draw_unvisited svg          =>  $svg,
                    piece        =>  $piece,
-                   scale        =>  $scale,
-                   min_x        =>  $min_x,
-                   max_x        =>  $max_x,
-                   min_y        =>  $min_y,
-                   max_y        =>  $max_y,
-                   margin_left  =>  $margin_left,
-                   margin_top   =>  $margin_top, if $args {show_unvisited};
+                   X            =>  \@X,
+                   Y            =>  \@Y, if $args {show_unvisited};
 
 
     draw_path  colours      => $args {colours} ? [split /,/ => $args {colours}]
@@ -280,7 +272,6 @@ sub route ($class, %args) {
                X            => \@X,
                Y            => \@Y,
                steps        => $args {steps} || $STEPS,
-               scale        => $scale,
                show_path    => $args {show_path},
                show_visited => $args {show_visited},
            if $args {show_path} || $args {show_visited};
@@ -290,11 +281,12 @@ sub route ($class, %args) {
     #
     draw_terminals X     => \@X,
                    Y     => \@Y,
-                   svg   => $svg,
-                   scale => $scale if $args {show_terminals};
+                   svg   => $svg, if $args {show_terminals};
 
 
     set_styles svg => $svg;
+
+    return $svg if $args {svg};
 
     my $xml = $svg -> xmlify;
 
@@ -303,6 +295,94 @@ sub route ($class, %args) {
     print $fh $xml;
     close $fh or die "Failed to close $file: $!";
 }
+
+my $field_width  = 128;   # Pixels
+my $field_height = $field_width;
+my $board_width  =   7;   # 7x7 movement board for now.
+my $board_height = $board_width;
+my $font_size    =  100;
+
+my sub draw_field ($svg, $x, $y, %args) {
+    my $class  = ($x + $y) % 2 ? "even" : "odd";
+
+    $svg -> rect (
+        x      =>  ($x - .5) * $field_width,
+        y      =>  ($y - .5) * $field_height,
+        width  =>   $field_width,
+        height =>   $field_height,
+        class  =>   $class,
+    );
+
+}
+
+
+
+sub movement ($class, %args) {
+    my $piece  = $args {piece};
+
+    my $from_x = - ($board_width  / 2) * $field_width;
+    my $from_y = - ($board_height / 2) * $field_height;
+    my $width  =    $board_width       * $field_width;
+    my $height =    $board_height      * $field_height;
+
+    my $min_x  = - int ($board_width  / 2);
+    my $min_y  = - int ($board_height / 2);
+    my $max_x  = $min_x + $board_width  - 1;
+    my $max_y  = $min_y + $board_height - 1;
+
+    #
+    # Create the SVG image
+    #
+    my $svg = SVG:: -> new (
+        viewBox  =>  "$from_x $from_y $width $height",
+        style    =>  <<~ "--",
+            display:    block;
+            border:     1px solid #ccc;
+            position:   absolute;
+            top:        5%;
+            left:       5%;
+            width:      90%;
+            height:     90%;
+            background: #fff;
+        --
+    );
+
+    #
+    # Create the fields
+    #
+    foreach my $x ($min_x .. $max_x) {
+        foreach my $y ($min_y .. $max_y) {
+            draw_field $svg, $x, $y;
+        }
+    }
+
+    #
+    # Place the piece on the center of the board
+    #
+    $svg -> text (
+        x => 0,
+        y => $font_size / 4,
+    ) -> cdata ($piece -> character // "?");
+
+    $svg -> style -> CDATA (<<~ "--");
+        rect.odd      {fill: brown;}
+        rect.even     {fill: rgb(232,235,239);}
+        text          {text-anchor: middle;
+                       font-size: ${font_size}px;}
+    --
+
+    my $rides = $piece -> rides;
+    
+
+    my $xml = $svg -> xmlify;
+
+    my $file = file_name $piece, "movement";
+    open my $fh, ">", $file or die "Failed to open $file: $!";
+    binmode $fh, ":utf8";
+    print $fh $xml;
+    close $fh or die "Failed to close $file: $!";
+}
+
 
 1;
 
