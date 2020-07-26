@@ -369,6 +369,17 @@ sub run ($self, %args) {
 }
 
 #
+# Return the bounding box containing the entire path
+#
+# Returns (min_x, min_y, max_x, max_y)
+#
+sub bounding_box ($self) {
+    my @out = ($min_x {$self}, $min_y {$self}, $max_x {$self}, $max_y {$self});
+    wantarray ? @out : \@out;
+}
+
+
+#
 # Summary: return a summary of what was done.
 #
 sub summary ($self) {
