@@ -10,7 +10,7 @@ use experimental 'signatures';
 use experimental 'lexical_subs';
 
 use Hash::Util::FieldHash qw [fieldhash];
-use List::Util            qw [max];
+use List::Util            qw [min max];
 
 fieldhash my %position;
 fieldhash my %character;
@@ -350,21 +350,30 @@ sub run ($self, %args) {
     $self -> set_position ($x, $y, $start);
 
     my $move_count = 0;
-    while ($move_count < $max_moves &&
-             (!$max_bounding_box  ||
-              ($max_bounding_box  >=  $max_x {$self} - $min_x {$self} &&
-               $max_bounding_box  >=  $max_y {$self} - $min_y {$self}))) {
-        if (my $target = $self -> target) {
-            my ($x, $y) = @$target;
-            $self -> set_position ($x, $y);
-            $move_count ++;
-            $self -> trigger_after_move;
-            next;
-        }
-        else {
+
+  MOVE:
+    while (1) {
+        my $target  = $self -> target;
+        if (!$target) {
             $self -> set_trapped;
-            last;
+            last MOVE;
         }
+
+        my ($x, $y) = @$target;
+        if ($max_bounding_box) {
+            my $t_min_x = min $x, $min_x {$self};
+            my $t_max_x = max $x, $max_x {$self};
+            my $t_min_y = min $y, $min_y {$self};
+            my $t_max_y = max $y, $max_y {$self};
+            last MOVE if $t_max_x - $t_min_x > $max_bounding_box ||
+                         $t_max_y - $t_min_y > $max_bounding_box;
+        }
+
+        $self -> set_position ($x, $y);
+        $move_count ++;
+        $self -> trigger_after_move;
+
+        last MOVE if $move_count >= $max_moves;
     }
 }
 
