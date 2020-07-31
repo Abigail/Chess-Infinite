@@ -139,6 +139,7 @@ my %Betza = (
 
 my %Alternative_Names = (
     Cardinal              =>  'Archbishop',     # Grand Chess
+    Centaur               =>  'Samurai',
     Centaurus             =>  'Archbishop',     # Carrera's Chess
     Chariot               =>  'Rook',           # Xiangqi, Chaturanga
     Commoner              =>  'King',
