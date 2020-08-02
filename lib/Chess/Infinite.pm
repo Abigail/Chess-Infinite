@@ -120,6 +120,7 @@ my %Betza = (
     GoldGeneral       =>  'WfF',
     Lance             =>  'fR',
     ShogiKnight       =>  'fN',
+    ShogiPawn         =>  'fW',
     SilverGeneral     =>  'FfW',
 
     #
