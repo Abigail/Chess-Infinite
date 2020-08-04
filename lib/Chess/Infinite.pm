@@ -149,6 +149,7 @@ my %Alternative_Names = (
     CrownedBishop         =>  'Monk',
     CrownedKnight         =>  'Samurai',
     CrownedRook           =>  'DragonKing',
+    Dabbabah              =>  'Dabbaba',
     DragonHorse           =>  'Monk',           # Shogi
     Empress               =>  'Chancellor',     # Used by problemists
     Forfnibakking         =>  'ChargingKnight', # Chess with different armies
