@@ -131,11 +131,13 @@ my %Betza = (
 
     # Janggi
     JanggiElephant    =>  'nZ',
+    DrunkenSoldier    =>  'sfW',
 
     #
     # Shogi variants
     #
     DrunkElephant     =>  'FsfW',
+
 );
 
 my %Alternative_Names = (
@@ -155,6 +157,8 @@ my %Alternative_Names = (
     Furlrurlbakking       =>  'ChargingRook',   # Chess with different armies
     GoldenGeneral         =>  'GoldGeneral',    # Shogi
     Guard                 =>  'King',           # Chess on an infinite plane
+    JanggiPawn            =>  'DrunkenSoldier', # Janggi
+    JanggiSoldier         =>  'DrunkenSoldier', # Janggi
     Janus                 =>  'Archbishop',     # Janus Chess
     KnightedBishop        =>  'Archbishop',
     KnightedKing          =>  'Samurai',
