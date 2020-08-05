@@ -62,7 +62,7 @@ my %Betza = (
     #
     Wazir             =>  'W',
     Ferz              =>  'F',
-    Dabbada           =>  'D',
+    Dabbaba           =>  'D',
     Alfil             =>  'A',
     Threeleaper       =>  'H',
     Camel             =>  'C',
